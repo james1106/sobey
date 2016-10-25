@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.magic.sangha.mapper.IGroupUserMapper">
+
+	<resultMap type="GroupUser" id="BaseGroupUser">
+
+		<result column="id" property="id" javaType="java.lang.Integer" />
+		<result column="mobile" property="mobile" javaType="java.lang.String" />
+		<result column="real_name" property="realName" javaType="java.lang.String" />
+		<result column="pwd" property="password" javaType="java.lang.String" />
+		<result column="email" property="email" javaType="java.lang.String" />
+		<result column="office_id" property="officeId" javaType="java.lang.Integer" />
+		<result column="qq" property="qq" javaType="java.lang.String" />
+		<result column="avatar" property="avatar" javaType="java.lang.String" />
+		<result column="status" property="status" javaType="java.lang.Integer" />
+		<result column="job_title" property="jobTitle" javaType="java.lang.String" />
+		<result column="introduce" property="introduce" javaType="java.lang.String" />
+		<result column="createtime" property="createDate" javaType="java.util.Date" />
+		<result column="updatetime" property="updateDate" javaType="java.util.Date" />
+		<result column="isemail" property="isEmail" javaType="java.lang.Integer" />
+		<result column="role_id" property="roleId" javaType="java.lang.Integer" />
+		<result column="company_id" property="companyId" javaType="java.lang.Integer" />
+		<result column="deviceType" property="deviceType" javaType="java.lang.Integer" />
+		<result column="officeName" property="officeName" javaType="java.lang.String" />
+		<result column="companyName" property="companyName" javaType="java.lang.String" />
+		<result column="deviceToken" property="deviceToken" javaType="java.lang.String" />
+		<result column="isOnLine" property="isOnLine" javaType="java.lang.Integer" />
+		<result column="countBonus" property="countBonus" javaType="java.lang.Integer"/>
+		<result column="countDays" property="countDays" javaType="java.lang.Integer"/>
+		<result column="user_type" property="userType" javaType="java.lang.Integer"/>
+		<result column="token" property="token" javaType="java.lang.String"/>
+		<association property="office" column="office_id" select="com.magic.sangha.mapper.IGroupOfficeMapper.findById" javaType="GroupOfficeBean"></association>
+		<association property="role" column="role_id" select="com.magic.sangha.mapper.IRoleMapper.findById" javaType="RoleBean"></association>
+		<association property="unit" column="company_id" select="com.magic.sangha.mapper.ICompanyMapper.findById"></association>
+		<association property="userCates" column="groupuser_id" select="com.magic.sangha.mapper.IGroupUserCategoryMapper.findCategoryByGroupUserId"></association>
+	</resultMap>
+
+
+	<select id="findTypeTokeById" resultMap="BaseGroupUser">
+		select
+		id,mobile,real_name,isemail,deviceType,deviceToken from t_group_user
+		where id=#{id}
+	</select>
+
+	<select id="findById" resultMap="BaseGroupUser">
+		select * from t_group_user where
+		id=#{id}
+	</select>
+
+	<select id="login" resultMap="BaseGroupUser">
+
+		select * from t_group_user where mobile=#{mobile} and pwd=#{password} 
+
+	</select>
+
+	<insert id="register" parameterType="GroupUser">
+
+		insert into t_group_user
+		(id,mobile,real_name,pwd,email,company_id,qq,avatar,status,job_title,introduce,createtime,updatetime,role_id,office_id,deviceType,deviceToken,isOnLine,user_type)values
+		(#{user.id},#{user.mobile},#{user.realName},#{user.password},#{user.email},#{user.companyId},#{user.qq},#{user.avatar},#{user.status},#{user.jobTitle},#{user.introduce}
+		,#{user.createDate},#{user.updateDate},#{user.roleId},#{user.officeId},#{user.deviceType},#{user.deviceToken},#{user.isOnLine},#{user.userType})
+
+	</insert>
+
+
+	<select id="findByRole" resultMap="BaseGroupUser">
+		select * from t_group_user
+		where role_id=#{roleId}
+	</select>
+
+	<select id="findByToken" resultMap="BaseGroupUser">
+		select * from t_group_user
+		where token=#{token}
+	</select>
+	<select id="updateToken">
+		update t_group_user set
+		token=#{token},updatetime=#{datetime} where id=#{id}
+	</select>
+
+	<select id="verifiMobile" resultType="java.lang.Integer">
+		select id from t_group_user
+		where mobile=#{mobile}
+	</select>
+
+	<update id="updateGroupUser">
+
+		update t_group_user set
+		<if test="user.password != null">
+			pwd = #{user.password},
+		</if>
+		<if test="user.realName != null">
+			real_name = #{user.realName},
+		</if>
+		<if test="user.email != null">
+			email=#{user.email},
+		</if>
+		<if test="user.qq != null">
+			qq=#{user.qq},
+		</if>
+		<if test="user.avatar != null">
+			avatar=#{user.avatar},
+		</if>
+
+		<if test="user.status != null">
+			status=#{user.status},
+		</if>
+		<if test="user.token != null">
+			token=#{user.token},
+		</if>
+		<if test="user.introduce != null">
+			introduce=#{user.introduce},
+		</if>
+		<if test="user.updateDate != null">
+			updatetime=#{user.updateDate},
+		</if>
+		<if test="user.officeId != null">
+			office_id=#{user.officeId},
+		</if>
+		<if test="user.role != null">
+			role_id=#{user.role.id},
+		</if>
+		<if test="user.mobile != null">
+			mobile=#{user.mobile}
+		</if>
+		where id=#{user.id}
+	</update>
+
+	<update id="updateGroupUserIsEmail">
+		update t_group_user set isemail=#{isEmail} where
+		id=#{id}
+	</update>
+
+	<select id="findByMobile" resultMap="BaseGroupUser">
+		select id, mobile,pwd from
+		t_group_user where mobile=#{mobile}
+	</select>
+
+	<select id="findByIdToName" resultMap="BaseGroupUser">
+		select
+		id,mobile,real_name, avatar,role_id from t_group_user where id=#{id}
+		and status=1
+	</select>
+
+	<select id="findByOfficeId" resultMap="BaseGroupUser">
+		select id,mobile,email,role_id,real_name
+		from t_group_user where office_id=#{officeId} and status=1
+		<if test=" isEmail != null">
+			 and isemail=#{isEmail}
+		</if>
+		
+	</select>
+
+	<select id="findByUserId" resultMap="BaseGroupUser">
+		SELECT avatar, id,mobile
+		,real_name,role_id from t_group_user where role_id=#{roleId} and
+		office_id in (SELECT office_id from t_tv where id in(select tv_id from
+		t_user where id=#{userId}))
+	</select>
+
+	<select id="findHeadTech" resultMap="BaseGroupUser">
+		select
+		avatar, id ,real_name,role_id from t_group_user where
+		role_id=#{roleId} and company_id=#{companyId} and status=1
+	</select>
+
+	<select id="findGroupUserByOfficeAndRole" resultMap="BaseGroupUser">
+
+		select avatar, id ,real_name from t_group_user where
+		office_id=#{officeId} and role_id=#{roleId} and status=1
+
+	</select>
+
+	<update id="updateDeviceTypeAndToken">
+		update t_group_user set
+		deviceType=#{deviceType},deviceToken=#{deviceToken} where id=#{id}
+	</update>
+
+	<select id="findGroupUserToManyRoleId" resultMap="BaseGroupUser">
+		select avatar,
+		id ,real_name from t_group_user where company_id=#{companyId} and
+		status=1 and (role_id=12 or role_id=13 or role_id=14)
+	</select>
+
+	<!-- 查询总部技术 -->
+
+	<select id="findHeadTechByRoleId" resultMap="BaseGroupUser">
+		select avatar, id
+		,real_name,role_id from t_group_user where role_id=#{roleId} and
+		status=1
+	</select>
+
+	<select id="findByAudit" resultMap="BaseGroupUser">
+		select g.*,o.office_name as officeName,c.company as companyName from
+		t_group_user g
+		LEFT JOIN t_group_office o ON g.office_id=o.id left JOIN t_company c ON
+		g.company_id= c.id where 1=1
+		
+		<if test="isAduit != null">
+			<if test="isAduit == 10 ">
+				and (g.`status`=1 or g.`status`=3 )
+			</if>
+			<if test="isAduit != 10">
+				and g.`status`=#{isAduit} 
+			</if>
+		</if>
+		
+		<if test="userName != null">
+			and real_name like '%${userName}%'
+		</if>
+		<if test="roleId != null">
+			and role_id=#{roleId}
+		</if>
+		ORDER BY createtime DESC limit #{limit},#{pageLimit}
+	</select>
+	<select id="countByStatus" resultType="java.lang.Integer">
+		select count(*) from t_group_user where 1=1
+		
+		<if test="status != null">
+			<if test="status == 10 ">
+				and (`status`=1 or `status`=3 )
+			</if>
+			<if test="status != 10">
+				and `status`=#{status}
+			</if>
+			<if test="userName != null">
+			and real_name like '%${userName}%'
+		</if>
+		<if test="roleId != null">
+			and role_id=#{roleId}
+		</if>
+		</if>
+		
+	</select>
+
+	<update id="updateStatusAndRole">
+		update t_group_user
+		<set>
+			<if test="roleId != null">
+				role_id=#{roleId},
+			</if>
+			<if test="status != null">
+				status=#{status}
+			</if>
+		</set>
+
+		where id=#{id}
+	</update>
+
+	<select id="findByOfficeAndIsEmail" resultMap="BaseGroupUser">
+		select
+		id,email,mobile from t_group_user where office_id=#{officeId} and
+		role_id=#{roleId} and isemail=#{isEmail} and status=1
+	</select>
+
+	<select id="findByEmail" resultMap="BaseGroupUser">
+		select id,email,mobile from
+		t_group_user where email=#{email}
+	</select>
+
+	<select id="findAllTechNOTFeibian" resultMap="BaseGroupUser">
+		SELECT * from t_group_user where `status`=1 and id not IN (select
+		DISTINCT groupuser_id from t_groupuser_category ) and
+		((role_id=10 and office_id in (SELECT office_id from t_tv where id in(select tv_id
+		from t_user where id=#{userId}))) or role_id=11)
+	</select>
+
+	<select id="findAllTechFeibian" resultMap="BaseGroupUser">
+		SELECT * from
+		t_group_user where `status`=1 and id IN (select DISTINCT groupuser_id
+		from t_groupuser_category where category_id=#{categoryId} )and
+		((role_id=10 and office_id in (SELECT office_id from t_tv where id
+		in(select tv_id from t_user where id=#{userId}))) or role_id=11)
+	</select>
+	
+	<select id="findAllDevelopFeibian" resultMap="BaseGroupUser" >
+		SELECT * from t_group_user where `status`=1 and id IN (select DISTINCT groupuser_id from t_groupuser_category where category_id=#{categoryId} )and role_id=8
+	</select>
+
+	<select id="findSaleByTVId" resultMap="BaseGroupUser">
+		SELECT
+		DISTINCT id,real_name,mobile from t_group_user where `status`=1 and
+		(office_id in (SELECT office_id from t_tv where id=#{tvId}) and
+		(role_id=6 or (role_id=6 and office_id IS NULL and company_id IS NOT
+		NULL))) OR (company_id IN (SELECT company_id FROM t_group_office
+		where id IN (SELECT office_id from t_tv where id=#{tvId})) and role_id=6)
+	</select>
+
+	<update id="updateUser">
+		update t_group_user
+		<set>
+			<if test="user.mobile != null">
+				mobile = #{user.mobile},
+			</if>
+			<if test="user.roleId != null">
+				role_id=#{user.roleId},
+			</if>
+			<if test="user.realName != null">
+				real_name=#{user.realName},
+			</if>
+			<if test="user.email != null">
+				email=#{user.email},
+			</if>
+			<if test="user.qq != null">
+				qq=#{user.qq},
+			</if>
+			<if test="user.introduce != null">
+				introduce=#{user.introduce},
+			</if>
+			<if test="user.jobTitle != null">
+				job_title=#{user.jobTitle},
+			</if>
+			<if test="user.officeId != null">
+				office_id=#{user.officeId},
+			</if>
+			<if test="user.officeId == null">
+				office_id=null,
+			</if>
+			<if test="user.companyId != null">
+				company_id=#{user.companyId},
+			</if>
+			<if test="user.companyId == null">
+				company_id=null,
+			</if>
+			<if test="user.isOnLine != null">
+				isOnLine=#{user.isOnLine}
+			</if>
+		</set>
+		where id=#{user.id}
+	</update>
+
+	<select id="findOfficeSaleByTvId" resultMap="BaseGroupUser">
+		SELECT
+		u.id,u.real_name from t_group_user u LEFT JOIN t_tv t ON
+		t.office_id=u.office_id where u.role_id=6 and u.`status` =1 and
+		t.id=#{tvId}
+	</select>
+
+	<select id="batchQueryGroupUser" resultMap="BaseGroupUser">
+		select id,mobile,real_name,isemail,deviceType,deviceToken from
+		t_group_user where id in
+		<foreach collection="ids" item="id" index="index" open="("
+			separator="," close=")">
+			#{id}
+		</foreach>
+	</select>
+
+	<select id="findAllToToken" resultMap="BaseGroupUser">
+		select
+		id,mobile,real_name,role_id,deviceType,deviceToken from t_group_user
+	</select>
+
+	<select id="findPageByRole" resultMap="BaseGroupUser">
+		select real_name,id,mobile,email,updatetime,isOnLine from t_group_user
+		where `status`=1 and role_id=#{roleId}
+		<if test="realName != null">
+			and real_name like '%${realName}%'
+		</if>
+		limit #{limit},#{limitSize}
+	</select>
+	<select id="countByRole" resultType="java.lang.Integer">
+		select count(*) from t_group_user where `status`=1 and
+		role_id=#{roleId}
+		<if test="realName != null">
+			and real_name like '%${realName}%'
+		</if>
+	</select>
+
+	<select id="countOnLineByService" resultType="java.lang.Integer">
+		select count(*)
+		from t_group_user where `status`=1 and isOnLine=0 and role_id=3
+	</select>
+
+	<select id="findPageTech" resultMap="BaseGroupUser">
+		select id as groupuser_id,id,role_id,real_name,mobile from
+		t_group_user where `status`=1 and ( role_id=11 or role_id=8 )
+		<if test="realName != null">
+			and real_name like '%${realName}%'
+		</if>
+		limit #{limit},#{limitSize}
+	</select>
+
+	<select id="countPageTech" resultType="java.lang.Integer">
+		select count(*) from t_group_user where `status`=1 and ( role_id=11 or role_id=8 )
+		<if test="realName != null">
+			and real_name like '%${realName}%'
+		</if>
+	</select>
+	
+	<select id="queryCountSign" resultMap="BaseGroupUser" >
+		SELECT sum(s.bonus) countBonus,count(s.id) countDays,g.id as id,g.real_name,g.mobile from  t_group_user g LEFT JOIN t_sign s  ON g.id=s.group_user_id  
+		where 1=1 
+			<if test="realName != null">
+				and g.real_name LIKE '%${realName}%'
+			</if>
+			 GROUP BY g.id ORDER BY countBonus desc	
+			 <if test="limit != null and limitSize != null">
+			 	LIMIT #{limit},#{limitSize}
+			 </if>
+	</select>
+	
+	<select id="countSign" resultType="java.lang.Integer">
+		select count(*) from t_group_user where 1=1
+		<if test="realName != null">
+				and real_name LIKE '%${realName}%'
+			</if>
+	</select>
+
+	<select id="queryByCompany" resultMap="BaseGroupUser" >
+		select id,mobile,email,role_id,real_name from t_group_user where office_id IN (SELECT id from t_group_office where company_id = #{companyId}) and `status`=1
+	</select>
+	
+	<select id="queryAll" resultMap="BaseGroupUser">
+		select id,mobile,email,role_id,real_name from t_group_user
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+

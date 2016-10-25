@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+ http://www.springframework.org/schema/context  
+ http://www.springframework.org/schema/context/spring-context-3.0.xsd 
+ http://www.springframework.org/schema/aop 
+ http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+ http://www.springframework.org/schema/tx
+ http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+ http://www.springframework.org/schema/mvc
+ http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+
+	<aop:aspectj-autoproxy />
+	<!-- <context:property-placeholder location="classpath:jdbc.properties" /> -->
+	<context:component-scan base-package="com.magic.sangha">
+	 <context:include-filter type="annotation" expression="org.springframework.stereotype.Component"></context:include-filter>
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Repository"></context:include-filter>
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Service"></context:include-filter>
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"></context:exclude-filter> 
+	</context:component-scan>
+
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+		<property name="url"
+			value="jdbc:mysql://127.0.0.1:3306/sangha?characterEncoding=utf-8" />
+		<property name="username" value="root" />
+		 <!-- <property name="password" value="Magic2015" /> -->
+		<property name="password" value="123" /> 
+	</bean>
+
+	<bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:mybaties.xml" />
+	</bean>
+
+	<bean id="mapperScanner" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.magic.sangha.mapper" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactoryBean" />
+	</bean>
+
+	<bean id="dataSourceTransactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+
+
+	<tx:advice id="txAdvice" transaction-manager="dataSourceTransactionManager">
+		<tx:attributes>
+			<tx:method name="*" propagation="REQUIRED" read-only="true"
+				rollback-for="java.lang.Exception" isolation="READ_COMMITTED"></tx:method>
+			<tx:method name="add*" propagation="REQUIRED" read-only="false"
+				rollback-for="java.lang.Exception" isolation="READ_COMMITTED"></tx:method>
+			<tx:method name="update*" propagation="REQUIRED" read-only="false"
+				rollback-for="java.lang.Exception" isolation="READ_COMMITTED"></tx:method>
+			<tx:method name="reg*" propagation="REQUIRED" read-only="false"
+				rollback-for="java.lang.Exception" isolation="READ_COMMITTED"></tx:method>
+			<tx:method name="batch*" propagation="REQUIRED" read-only="false"
+				rollback-for="java.lang.Exception" isolation="READ_COMMITTED"></tx:method>
+			<tx:method name="del*" propagation="REQUIRED" read-only="false"
+				rollback-for="java.lang.Exception" isolation="READ_COMMITTED"></tx:method>
+			<tx:method name="find*" propagation="SUPPORTS" read-only="true"
+				isolation="READ_COMMITTED"></tx:method>
+			<tx:method name="get*" propagation="SUPPORTS" read-only="true"
+				isolation="READ_COMMITTED"></tx:method>
+			<tx:method name="select*" propagation="SUPPORTS" read-only="true"
+				isolation="READ_COMMITTED"></tx:method>
+			<tx:method name="search*" propagation="SUPPORTS" read-only="true"
+				isolation="READ_COMMITTED"></tx:method>
+			<tx:method name="save*" propagation="REQUIRED" read-only="false"
+				rollback-for="java.lang.Exception" isolation="READ_COMMITTED"></tx:method>
+			<tx:method name="unbind*" propagation="REQUIRED" read-only="false"
+				rollback-for="java.lang.Exception" isolation="READ_COMMITTED"></tx:method>
+		</tx:attributes>
+	</tx:advice>
+
+	<aop:config>
+		<aop:pointcut id="serviceMethods"
+			expression="execution(* com.magic.sangha.service.impl.*ServiceImpl.*(..))"></aop:pointcut>
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="serviceMethods"></aop:advisor>
+	</aop:config>
+
+
+	<!-- 定时任务器  定时清除 告警信息-->
+	<bean id="clearReportTask" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass" value="com.magic.sangha.task.ClearReportTask"></property>
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="timeout" value="10" />
+			</map>
+		</property>
+	</bean>
+	<bean id="clearReportcronTriggerFactoryBean" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="clearReportTask"></property>
+		<!-- 每天凌晨1点钟 -->
+		<property name="cronExpression" >
+			<value>0 0 1 * * ?</value>
+		</property>
+	</bean>
+	
+<!-- 定时任务器  定时更新 告警信息-->
+	<bean id="updateReportTask" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass" value="com.magic.sangha.task.UpdateDeviceEventTask"></property>
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="timeout" value="10" />
+			</map>
+		</property>
+	</bean>
+	<bean id="updateReportcronTriggerFactoryBean" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="updateReportTask"></property>
+		<!-- 每5分钟更新一次 -->
+		<property name="cronExpression" >
+			<!-- <value>0 0/5 * * * ?</value> -->
+			<value>0 0 1 * * ?</value>
+		</property>
+	</bean>
+	
+	<!-- 定时任务器  定时更新 设备列表-->
+	<bean id="updateDeviceTask" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass" value="com.magic.sangha.task.UpdateDeviceListTask"></property>
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="timeout" value="10" />
+			</map>
+		</property>
+	</bean>
+	<bean id="updateDevicecronTriggerFactoryBean" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="updateDeviceTask"></property>
+		<!-- 每两小时更新一次 -->
+		<property name="cronExpression" value="0 0 0/2 * * ? "></property>
+	</bean>
+	
+	
+	<!-- 定时任务器  定时更新 15天没有验证通过 的订单-->
+	<bean id="orderTask" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass" value="com.magic.sangha.task.UpdateOrderStatusTask"></property>
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="timeout" value="10" />
+			</map>
+		</property>
+	</bean>
+	<bean id="ordercronTriggerFactoryBean" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="orderTask"></property>
+		<!-- 每天凌晨1点 -->
+		<property name="cronExpression" value="0 0 1 * * ?"></property>
+	</bean>
+	
+	
+	<!-- 触发器列表    -->  
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="clearReportcronTriggerFactoryBean" />
+				<ref bean="updateReportcronTriggerFactoryBean" />
+				<ref bean="updateDevicecronTriggerFactoryBean" />
+				<ref bean="ordercronTriggerFactoryBean"/>
+			</list>
+		</property>
+		<property name="schedulerContextAsMap">
+			<map>
+				<description>schedulerContextAsMap</description> 
+				<entry key="reportServiceImpl" value-ref="IReportService"/>    
+				<entry key="deviceServiceImpl" value-ref="IDeviceService"/> 
+				<entry key="orderServiceImpl" value-ref="IOrderService"></entry>
+			</map>
+		</property>
+	</bean>
+	<bean id="IReportService" class="com.magic.sangha.service.impl.ReportServiceImpl"></bean>
+	<bean id="IDeviceService" class="com.magic.sangha.service.impl.DeviceServiceImpl"></bean>
+	<bean id="IOrderService" class="com.magic.sangha.service.impl.OrderServiceImpl"></bean>
+	<!-- 测试定时任务器 
+	<bean id="testTask" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass" value="com.magic.sangha.task.TestTask"></property>
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="timeout" value="10" />
+			</map>
+		</property>
+	</bean>
+	<bean id="testcronTriggerFactoryBean" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="testTask"></property> -->
+		<!-- 
+		<property name="cronExpression" value="0/2 * * * * ?"></property> 
+		 -->
+		<!-- 每5分钟更新一次 
+		<property name="cronExpression" value="0 0/5 * * * ?"></property>
+	</bean>
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="testcronTriggerFactoryBean" />
+			</list>
+		</property>
+	</bean>
+	-->
+	
+	
+</beans>
+
+
+
+
+
+
+

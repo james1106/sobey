@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.magic.sangha.mapper.IGroupOfficeMapper">
+
+	<resultMap type="GroupOfficeBean" id="BaseOffice">
+		<result column="id" property="id" javaType="java.lang.Integer"/>
+		<result column="office_name" property="officeName" javaType="java.lang.String"/>
+		<result column="office_name" property="companyName" javaType="java.lang.String"/>
+		<result column="company_id" property="companyId" javaType="java.lang.Integer"/>
+		<result column="type" property="type" javaType="java.lang.Integer"/>
+		<association property="company" column="company_id" select="com.magic.sangha.mapper.ICompanyMapper.findById"></association>
+		
+	</resultMap>
+	
+	<insert id="addOffice">
+		insert into t_group_office(office_name,company_id) values (#{office.officeName},#{office.companyId})
+	</insert>
+	
+	<select id="findByComplanyId" resultMap="BaseOffice">
+		select * from t_group_office where company_id=#{comId}
+	</select>
+	
+	<select id="findLikeByOfficeName" resultMap="BaseOffice">
+		select * from t_group_office where 1=1
+		<if test="officeName != null ">
+			and office_name like '%${officeName}%'
+		</if>
+		<if test="pageSize != null">
+			limit #{pageSize},#{pageSizeLimit}
+		</if>
+		
+	</select>
+	
+	<select id="countOffice" resultType="java.lang.Integer">
+		select count(*) from t_group_office where 1=1
+		<if test="officeName != null ">
+			and office_name like '%${officeName}%'
+		</if>
+	</select>
+	
+	<select id="findById" resultMap="BaseOffice" >
+		select * from t_group_office where id=#{id}
+	</select>
+	
+	<select id="findByUserId"  resultMap="BaseOffice">
+		select * from t_group_office where id in (SELECT office_id from t_tv where id in (SELECT tv_id from t_user where id=#{userId}))
+	</select>
+	
+	<update id="update">
+		update t_group_office set office_name=#{office.officeName} where id=#{office.id}
+	</update>
+	
+	<select id="queryByOfficeName" resultType="java.lang.Integer" >
+		select count(*)  from t_group_office where office_name=#{officeName}
+	</select>
+
+</mapper>

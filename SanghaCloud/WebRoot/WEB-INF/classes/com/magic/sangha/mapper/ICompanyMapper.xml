@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.magic.sangha.mapper.ICompanyMapper">
+
+	<resultMap type="CompanyBean" id="BaseCompany">
+	
+		<result column="id" property="id" javaType="java.lang.Integer"/>
+		<result column="company" property="companyName" javaType="java.lang.String"/>
+		<result column="type" property="type" javaType="java.lang.Integer"/>
+	
+	</resultMap>
+	
+	
+	<insert id="addCompany">
+	
+		insert into t_company (type,company) values (#{company.type},#{company.companyName})
+	
+	</insert>
+	
+	
+	<select id="findById" resultMap="BaseCompany">
+	
+		select *  from t_company where id=#{id}
+	
+	</select>
+	
+	<select id="findAll" resultMap="BaseCompany">
+		select * from t_company 
+	</select>
+	
+	<select id="findAllByType" resultMap="BaseCompany">
+		select * from t_company where type=#{type}
+	</select>
+	
+	
+	<select id="findCompanyByType"  resultMap="BaseCompany">
+	
+		select * from t_company where 1=1
+		<if test="type != null">
+			and type=#{type}
+		</if>
+		<if test="companyName != null">
+			and company like '%${companyName}%'
+		</if>
+		<if test="limit != null">
+			limit #{limit},#{limitSize}
+		</if>
+		
+		
+	</select>
+	
+	<select id="countCompanyByType" resultType="java.lang.Integer">
+		select count(*) from t_company where 1=1
+		<if test="type != null">
+			and type=#{type}
+		</if>
+		<if test="companyName != null">
+			and company like '%${companyName}%'
+		</if>
+	</select>
+	
+	<update id="update">
+		update t_company set company = #{companyBean.companyName} where id=#{companyBean.id}
+	</update>
+	
+	<select id="queryByCompanyName" resultType="java.lang.Integer">
+		select count(*)  from t_company where company=#{companyName}
+	</select>
+	
+
+</mapper>

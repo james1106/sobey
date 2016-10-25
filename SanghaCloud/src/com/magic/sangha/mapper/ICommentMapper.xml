@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.magic.sangha.mapper.ICommentMapper">
+
+	<resultMap type="CommentBean" id="BaseComment">
+		
+		<result column="id" property="id" javaType="java.lang.Integer"/>
+		<result column="service_data" property="serviceData" javaType="java.lang.String"/>
+		<result column="tsc_data" property="TSCData" javaType="java.lang.String"/>
+		<result column="head_tech_data" property="headTechData" javaType="java.lang.String"/>
+		<result column="head_develop_data" property="headDevelopData" javaType="java.lang.String"/>
+		<result column="order_id" property="orderId" javaType="java.lang.Integer"/>
+		<result column="type" property="type" javaType="java.lang.Integer"/>
+		<result column="createtime" property="createTime" javaType="java.util.Date"/>
+		<result column="comment_content" property="commentContent" javaType="java.lang.String"/>
+		<result column="orderNumber" property="orderNumber" javaType="java.lang.String"/>
+		<result column="real_name" property="userName" javaType="java.lang.String"/>
+	</resultMap>
+	
+	<insert id="addComment"  useGeneratedKeys="true" keyProperty="comment.id" parameterType="com.magic.sangha.bean.CommentBean" >
+		insert into t_comment (service_data,tsc_data,head_tech_data,head_develop_data,order_id,type,comment_content,createtime)values (
+		#{comment.serviceData},#{comment.TSCData},#{comment.headTechData},#{comment.headDevelopData},#{comment.orderId},#{comment.type},#{comment.commentContent},#{comment.createTime})
+	</insert>
+	
+	<select id="findByOrderIdAndType" resultMap="BaseComment">
+	
+		select * from t_comment where order_id=#{orderId}
+		<if test="type != null">
+			and type=#{type}
+		</if>
+		<if test="roleType==3">
+			<!-- 如果是客服 -->
+			and service_data is NULL
+		</if>
+		<if test="roleType==10">
+			<!-- 如果是TSC -->
+			and tsc_data is NULL
+		</if>
+		<if test="roleType==11">
+			<!-- 如果是总部技术 -->
+			and head_tech_data is NULL
+		</if>
+		<if test="roleType==8">
+			<!-- 如果是研发 -->
+			and head_develop_data is NULL
+		</if>
+	</select>
+	
+	<select id="queryCountByGroupUser" resultMap="BaseComment">
+		SELECT * from t_comment where order_id IN (SELECT o.id from t_order o,t_group_user u where 1=1
+			<if test="roleId != null">
+				<if test="roleId == 3">
+					<!-- 客服 -->
+					and u.id=o.service_id and u.id=#{groupUserId}) AND service_data IS NOT NULL
+				</if>
+				<if test="roleId == 10">
+					<!-- 分公司技术 -->
+					and u.id=o.tech_id and u.id=#{groupUserId}) AND tsc_data IS NOT NULL
+				</if>
+				<if test="roleId == 11">
+					<!-- 总公司技术 -->
+					and u.id=o.head_tech_id and u.id=#{groupUserId}) AND head_tech_data IS NOT NULL
+				</if>
+				<if test="roleId == 8">
+					<!-- 研发 -->
+					and u.id=o.develop_id and u.id=#{groupUserId}) AND head_develop_data IS NOT NULL
+				</if>
+				
+			</if>
+		 
+	</select>
+
+	<select id="queryCountByOfficeId"  resultMap="BaseComment">
+		SELECT tsc_data,order_id from t_comment where order_id IN (SELECT o.id from t_order o,t_group_user u where u.id=o.tech_id and u.office_id= #{officeId} ) 
+		AND tsc_data is not null
+	</select>
+	
+	<select id="queryCountByCompanyId" resultMap="BaseComment">
+		SELECT tsc_data,order_id from t_comment where order_id IN (SELECT o.id from t_order o,t_group_user u where u.id=o.tech_id 
+		and u.office_id IN (select id FROM t_group_office where company_id=#{companyId} ) ) AND tsc_data is not null
+	</select>
+
+	<select id="queryPageCountByGroupUser" resultMap="BaseComment" >
+		SELECT c.*,co.order_number as orderNumber from t_comment c LEFT JOIN t_order co ON c.order_id=co.id where c.order_id IN (SELECT o.id from t_order o,t_group_user u where 1=1
+			<if test="roleId != null">
+				<if test="roleId == 3">
+					<!-- 客服 -->
+					and u.id=o.service_id and u.id=#{groupUserId}) AND c.service_data IS NOT NULL
+				</if>
+				<if test="roleId == 10">
+					<!-- 分公司技术 -->
+					and u.id=o.tech_id and u.id=#{groupUserId}) AND c.tsc_data IS NOT NULL
+				</if>
+				<if test="roleId == 11">
+					<!-- 总公司技术 -->
+					and u.id=o.head_tech_id and u.id=#{groupUserId}) AND c.head_tech_data IS NOT NULL
+				</if>
+				<if test="roleId == 8">
+					<!-- 研发 -->
+					and u.id=o.develop_id and u.id=#{groupUserId}) AND c.head_develop_data IS NOT NULL
+				</if>
+			</if>
+			ORDER BY c.createtime DESC
+			<if test="limit != null and limitSize != null">
+				limit #{limit},#{limitSize}
+			</if>
+	</select>
+	
+	<select id="countPageCountByGroupUser" resultType="java.lang.Integer">
+		SELECT count(*)  from t_comment c LEFT JOIN t_order co ON c.order_id=co.id where c.order_id IN (SELECT o.id from t_order o,t_group_user u where 1=1
+			<if test="roleId != null">
+				<if test="roleId == 3">
+					<!-- 客服 -->
+					and u.id=o.service_id and u.id=#{groupUserId}) AND c.service_data IS NOT NULL
+				</if>
+				<if test="roleId == 10">
+					<!-- 分公司技术 -->
+					and u.id=o.tech_id and u.id=#{groupUserId}) AND c.tsc_data IS NOT NULL
+				</if>
+				<if test="roleId == 11">
+					<!-- 总公司技术 -->
+					and u.id=o.head_tech_id and u.id=#{groupUserId}) AND c.head_tech_data IS NOT NULL
+				</if>
+				<if test="roleId == 8">
+					<!-- 研发 -->
+					and u.id=o.develop_id and u.id=#{groupUserId}) AND c.head_develop_data IS NOT NULL
+				</if>
+			</if>
+	</select>
+
+	<select id="queryPageCountByOfficeId" resultMap="BaseComment">
+		SELECT c.*,co.order_number as orderNumber from t_comment c LEFT JOIN t_order co ON c.order_id=co.id where c.order_id IN (SELECT o.id from t_order o,t_group_user u where u.id=o.tech_id and u.office_id= #{officeId} ) 
+		AND c.tsc_data is not null
+		ORDER BY c.createtime DESC
+		<if test="limit != null and limitSize != null">
+			limit #{limit},#{limitSize}
+		</if>
+	</select>
+	
+	<select id="countPageCountByOfficeId" resultType="java.lang.Integer">
+		SELECT count(*) from t_comment c LEFT JOIN t_order co ON c.order_id=co.id where c.order_id IN (SELECT o.id from t_order o,t_group_user u where u.id=o.tech_id and u.office_id= #{officeId} ) 
+		AND c.tsc_data is not null
+	</select>
+	
+	<select id="queryPageCountByCompanyId" resultMap="BaseComment">
+		SELECT  c.*,co.order_number as orderNumber from t_comment c LEFT JOIN t_order co ON c.order_id=co.id  where c.order_id IN (SELECT o.id from t_order o,t_group_user u where u.id=o.tech_id 
+		and u.office_id IN (select id FROM t_group_office where company_id=#{companyId} ) ) AND c.tsc_data is not null
+		ORDER BY c.createtime DESC
+		<if test="limit != null and limitSize != null">
+			limit #{limit},#{limitSize}
+		</if>
+	</select>
+	
+	<select id="countPageCountByCompanyId" resultType="java.lang.Integer">
+		SELECT  count(*) from t_comment c LEFT JOIN t_order co ON c.order_id=co.id  where c.order_id IN (SELECT o.id from t_order o,t_group_user u where u.id=o.tech_id 
+		and u.office_id IN (select id FROM t_group_office where company_id=#{companyId} ) ) AND c.tsc_data is not null
+	</select>
+
+
+	<select id="queryCountCommentByUser" resultMap="BaseComment">
+		SELECT u.real_name, c.*,o.order_number as orderNumber from t_comment c,t_order o,t_user u WHERE o.id=c.order_id AND o.user_id=#{userId} AND u.id=o.user_id AND c.type=1
+	</select>
+
+
+	<select id="queryPageCountByUserId" resultMap="BaseComment">
+		SELECT  c.*,o.order_number as orderNumber from t_comment c,t_order o WHERE o.id=c.order_id AND o.user_id=#{userId}  AND c.type=1
+		ORDER BY c.createtime DESC
+		<if test="limit != null and limitSize != null">
+			limit #{limit},#{limitSize}
+		</if>
+	</select>
+
+	<select id="countByUserId" resultType="java.lang.Integer">
+		SELECT  count(*)  from t_comment c,t_order o WHERE o.id=c.order_id AND o.user_id=#{userId}  AND c.type=1
+	</select>
+
+
+
+
+
+
+
+
+</mapper>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.magic.sangha.mapper.IGroupUserCategoryMapper">
+
+	<resultMap type="GroupUserCategoryBean" id="BaseGroupUserCategory">
+	
+		<result column="id" property="id" javaType="java.lang.Integer"/>
+		<result column="category_id" property="categoryId" javaType="java.lang.Integer"/>
+		<result column="groupuser_id" property="groupuserId" javaType="java.lang.Integer"/>
+		<result column="categoryName" property="categoryName" javaType="java.lang.String"/>
+		<result column="userName" property="groupUserName" javaType="java.lang.String"/>
+		<result column="mobile" property="mobile" javaType="java.lang.String"/>
+	</resultMap>
+
+	<insert id="addGroupUserCategory" >
+		insert into t_groupuser_category (category_id,groupuser_id) values(#{gcb.categoryId},#{gcb.groupuserId})
+	</insert>
+	
+	<insert id="batchAdd">
+		insert into t_groupuser_category (category_id,groupuser_id) values
+		<foreach collection="categorys" item="gcb" index="index" separator=",">
+			(#{gcb.categoryId},#{gcb.groupuserId})
+		</foreach>
+	</insert>
+	
+	<select id="findByCategory" resultMap="BaseGroupUserCategory">
+		select * from t_groupuser_category where category_id=#{categoryId}
+	</select>
+	
+	<select id="findAllByGroupUser" resultMap="BaseGroupUserCategory">
+		SELECT distinct groupuser_id from t_groupuser_category 
+	</select>
+
+	<select id="findCategoryByGroupUserId" resultMap="BaseGroupUserCategory">
+		select c.id id,c.category_id category_id,c.groupuser_id groupuser_id,oc.category_name as categoryName from t_groupuser_category c,t_order_category oc where c.category_id=oc.id and groupuser_id=#{groupUserId}
+	</select>
+	
+	<delete id="delCategoryByGroupUserId">
+		delete from t_groupuser_category where groupuser_id=#{groupUserId}
+	</delete>
+	
+	<select id="findCategoryAdmin" resultMap="BaseGroupUserCategory">
+		SELECT o.id AS categoryId,o.category_name as categoryName,g.id as groupuserId,g.real_name as userName,g.mobile from t_order_category o 
+		LEFT JOIN t_groupuser_category c ON c.category_id=o.id  and c.groupuser_id=#{groupUserId}  LEFT JOIN t_group_user g ON g.id=c.groupuser_id and g.id=#{groupUserId}
+	</select>
+	
+</mapper>

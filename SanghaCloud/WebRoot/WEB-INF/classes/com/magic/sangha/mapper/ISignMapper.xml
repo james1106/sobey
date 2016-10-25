@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.magic.sangha.mapper.ISignMapper">
+
+	<resultMap type="SignBean" id="BaseSign">
+		<result column="id" property="id" javaType="java.lang.Integer"/>
+		<result column="user_id" property="userId" javaType="java.lang.Integer"/>
+		<result column="bonus" property="bonus" javaType="java.lang.Integer"/>
+		<result column="group_user_id" property="groupUserId" javaType="java.lang.Integer"/>
+		<result column="createtime" property="createTime" javaType="java.util.Date"/>
+	</resultMap>
+	
+	<insert id="addSign">
+		insert into t_sign(user_id,`bonus`,`createtime`,group_user_id) values(#{sign.userId},#{sign.bonus},#{sign.createTime},#{sign.groupUserId})
+	</insert>
+	
+	<select id="findSignByUserId" resultMap="BaseSign">
+		select * from t_sign where   date_format(createtime,'%Y%m%d')=#{yyMMdd} 
+		<if test="userId != null">
+			and user_id=#{userId}
+		</if>
+		<if test="groupUserId != null">
+			and group_user_id=#{groupUserId}
+		</if>
+	</select>
+	
+	<select id="findByUserId" resultMap="BaseSign">
+		select * from t_sign where 1=1
+		<if test="userId != null">
+			and user_id=#{userId}
+		</if>
+		<if test="groupUserId != null">
+			and group_user_id=#{groupUserId}
+		</if>
+		 ORDER BY createtime DESC limit #{limit},#{limitSize}
+	</select>
+	
+	<select id="countSignByUserId" resultType="java.lang.Integer">
+		select count(*) from t_sign where 1=1 
+		<if test="userId != null">
+			and user_id=#{userId}
+		</if>
+		<if test="groupUserId != null">
+			and group_user_id=#{groupUserId}
+		</if>
+	</select>
+	
+	<select id="sumSignByUserId" resultType="java.lang.Integer">
+		select sum(bonus) from t_sign where 1=1
+		<if test="userId != null">
+			and user_id=#{userId}
+		</if>
+		<if test="groupUserId != null">
+			and group_user_id=#{groupUserId}
+		</if>
+	</select>
+
+</mapper>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.magic.sangha.mapper.ISuggestMapper">
+
+	<resultMap type="SuggestBean" id="BaseSuggest">
+		<result column="id" property="id" javaType="java.lang.Integer"/>
+		<result column="content" property="content" javaType="java.lang.String"/>
+		<result column="user_id" property="userId" javaType="java.lang.Integer"/>
+		<result column="group_user_id" property="groupUserId" javaType="java.lang.String"/>
+		<result column="create_time" property="createDate" javaType="java.util.Date"/>
+		<result column="userName" property="userName" javaType="java.lang.String"/>
+		<result column="realName" property="realName" javaType="java.lang.String"/>
+		<result column="userMobile" property="userMobile" javaType="java.lang.String"/>
+		<result column="mobile" property="mobile" javaType="java.lang.String"/>
+		<result column="userEmail" property="userEmail" javaType="java.lang.String"/>
+		<result column="email" property="email" javaType="java.lang.String"/>
+	</resultMap>
+	
+	<insert id="add">
+		insert into t_suggest (content,user_id,group_user_id,create_time) values (#{suggest.content},#{suggest.userId},#{suggest.groupUserId},#{suggest.createDate})
+	</insert>
+	
+	<select id="queryPage" resultMap="BaseSuggest">
+		SELECT s.content,u.real_name userName,u.mobile userMobile,u.email userEmail,g.real_name realName,g.mobile mobile,g.email email,s.create_time from t_suggest s LEFT JOIN t_user u ON s.user_id=u.id 
+		LEFT JOIN t_group_user g ON s.group_user_id=g.id ORDER BY s.create_time DESC limit #{limit},#{limitSize}
+	</select>
+
+	<select id="countPage" resultType="java.lang.Integer">
+		select count(*) from t_suggest
+	</select>
+</mapper>

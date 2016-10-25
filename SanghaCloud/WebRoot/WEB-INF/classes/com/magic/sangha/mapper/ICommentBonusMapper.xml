@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.magic.sangha.mapper.ICommentBonusMapper">
+
+	<resultMap type="CommentBonusBean" id="BaseCommentBonus">
+		<result column="id" property="id" javaType="java.lang.Integer"/>
+		<result column="bonus" property="bonus" javaType="java.lang.Integer"/>
+		<result column="user_id" property="userId" javaType="java.lang.Integer"/>
+		<result column="group_user_id" property="groupUserId" javaType="java.lang.Integer"/>
+		<result column="comment_id" property="commentId" javaType="java.lang.Integer"/>
+		<result column="create_time" property="createTime" javaType="java.util.Date"/>
+	</resultMap>
+	
+	<insert id="add">
+		insert into t_comment_bonus (`bonus`,user_id,group_user_id,comment_id,create_time) values(#{commentBonus.bonus},#{commentBonus.userId},#{commentBonus.groupUserId},
+		#{commentBonus.commentId},#{commentBonus.createTime})
+	</insert>
+	
+	<select id="countByUser" resultType="java.lang.Integer">
+		select sum(bonus) from t_comment_bonus where 1=1
+		<if test="userId != null">
+			and user_id=#{userId}
+		</if>
+		<if test="groupUserId != null">
+			and group_user_id=#{groupUserId}
+		</if>
+	</select>
+
+</mapper>

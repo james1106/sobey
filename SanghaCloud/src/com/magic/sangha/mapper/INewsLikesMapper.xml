@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.magic.sangha.mapper.INewsLikesMapper">
+
+	<resultMap type="NewsLikesBean" id="BaseLikes">
+		<result column="id" property="id" javaType="java.lang.Integer"/>
+		<result column="user_id" property="userId" javaType="java.lang.Integer"/>
+		<result column="group_id" property="groupUserId" javaType="java.lang.Integer"/>
+		<result column="news_id" property="newsId" javaType="java.lang.Integer"/>
+	</resultMap>
+	
+	<insert id="addNewsLike">
+		insert into t_news_likes (user_id,group_id,news_id) values (#{likes.userId},#{likes.groupUserId},#{likes.newsId})
+	</insert>
+	
+	<select id="findByUserId" resultMap="BaseLikes">
+		select * from t_news_likes where news_id=#{newsId}
+		<if test="groupUserId != null">
+			and group_id=#{groupUserId}
+		</if>
+		<if test="userId != null">
+			and user_id=#{userId}
+		</if>
+	</select>
+	
+	<delete id="delNewsLikes">
+		delete from t_news_likes where news_id=#{likes.newsId}
+		<if test="likes.userId != null">
+			and user_id=#{likes.userId}
+		</if>
+		<if test="likes.groupUserId != null">
+			and group_id=#{likes.groupUserId}
+		</if>
+	</delete>
+	<select id="countLikes" resultType="java.lang.Integer">
+		select count(*) from t_news_likes where news_id=#{newsId}
+	</select>
+
+</mapper>

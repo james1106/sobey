@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.magic.sangha.mapper.IDeviceMapper">
+
+	<resultMap type="DeviceBean" id="BaseDevice">
+	
+		<result column="id" property="id" javaType="java.lang.Integer"/>
+		<result column="hostKey" property="hostKey" javaType="java.lang.String"/>
+		<result column="hostName" property="hostName" javaType="java.lang.String"/>
+		<result column="interIPAddress" property="interIPAddress" javaType="java.lang.String"/>
+		<result column="stationCode" property="stationCode" javaType="java.lang.String"/>
+		<result column="groupCode" property="groupCode" javaType="java.lang.String"/>
+		<result column="status" property="status" javaType="java.lang.String"/>
+		<result column="systemInfo" property="systemInfo" javaType="java.lang.String"/>
+		<result column="loadInfo" property="loadInfo" javaType="java.lang.String"/>
+		<result column="remoteIP" property="remoteIP" javaType="java.lang.String"/>
+		<result column="createtime" property="createTime" javaType="java.util.Date"/>
+	
+	</resultMap>
+	
+	<insert id="batchAddDevice" parameterType="java.util.List">
+		insert into t_device_list (`hostKey`,`hostName`,`interIPAddress`,`stationCode`,`groupCode`,`status`,`systemInfo`,`loadInfo`,`remoteIP`,`createtime`) values
+		<foreach collection="devices" item="device" index="index" separator=",">
+			(#{device.hostKey},#{device.hostName},#{device.interIPAddress},#{device.stationCode},#{device.groupCode},#{device.status},#{device.systemInfo},#{device.loadInfo},#{device.remoteIP},#{device.createTime})
+		</foreach>
+	</insert>
+	
+	<select id="findPageData" resultMap="BaseDevice">
+		select id,hostKey,hostName,interIPAddress,stationCode,groupCode, `status`,systemInfo,loadInfo,remoteIP,createtime  from t_device_list where 1=1
+		<if test="stationCodes != null">
+			and stationCode in
+			<foreach collection="stationCodes" item="stationCode" index="index" open="(" separator="," close=")">
+				#{stationCode}
+			</foreach>
+			
+		</if>
+		<if test="groupCode != null">
+			and groupCode = #{groupCode}
+		</if>
+		<if test="limit != null">
+			limit #{limit},#{limitSize}
+		</if>
+	</select>
+	
+	<select id="countDevice" resultType="java.lang.Integer">
+		select count(*) from t_device_list where 1=1
+		<if test="stationCodes != null">
+			and stationCode in
+			<foreach collection="stationCodes" item="stationCode" index="index" open="(" separator="," close=")">
+				#{stationCode}
+			</foreach>
+		</if>
+		<if test="groupCode != null">
+			and groupCode = #{groupCode}
+		</if>
+	</select>
+	
+	<select id="findAllDevice" resultMap="BaseDevice">
+		select id,hostKey,hostName,interIPAddress,stationCode,groupCode, `status`,systemInfo,loadInfo,remoteIP,createtime from t_device_list 
+	</select>
+
+
+</mapper>

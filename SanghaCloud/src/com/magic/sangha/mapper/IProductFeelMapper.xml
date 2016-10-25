@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.magic.sangha.mapper.IProductFeelMapper">
+
+	<resultMap type="ProductFeelBean" id="BaseFeel">
+		<result column="id" property="id" javaType="java.lang.Integer"/>
+		<result column="user_id" property="userId" javaType="java.lang.Integer"/>
+		<result column="create_time" property="createTime" javaType="java.util.Date"/>
+		<result column="real_name" property="realName" javaType="java.lang.String"/>
+		<result column="email" property="email" javaType="java.lang.String"/>
+		<result column="mobile" property="mobile" javaType="java.lang.String"/>
+		<result column="tvName" property="tvName" javaType="java.lang.String"/>
+	</resultMap>
+	
+	<insert id="add">
+		insert into t_product_feeling (user_id,create_time) values (#{feel.userId},#{feel.createTime})
+	</insert>
+	
+	<select id="queryCheckIsFeel" resultType="java.lang.Integer">
+		select count(*) from t_product_feeling where user_id=#{userId}
+	</select>
+	
+	<select id="queryPage" resultMap="BaseFeel">
+		SELECT u.real_name,u.email,u.mobile, p.create_time,p.user_id,t.stationName tvName from t_product_feeling p LEFT JOIN t_user u on u.id = p.user_id  LEFT JOIN t_tv t ON u.tv_id = t.id   ORDER BY p.create_time DESC limit #{limit},#{limitSize}
+	</select>
+	
+	<select id="countPage" resultType="java.lang.Integer">
+		select count(*) from t_product_feeling
+	</select>
+
+</mapper>

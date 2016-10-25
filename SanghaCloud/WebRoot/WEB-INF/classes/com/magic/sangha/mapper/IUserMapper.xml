@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.magic.sangha.mapper.IUserMapper">
+
+	<resultMap type="UserBean" id="BaseUser">
+		<result column="id" property="id" javaType="java.lang.Integer"/>
+		<result column="mobile" property="mobile" javaType="java.lang.String"/>
+		<result column="real_name" property="realName" javaType="java.lang.String"/>
+		<result column="pwd" property="password" javaType="java.lang.String"/>
+		<result column="email" property="email" javaType="java.lang.String"/>
+		<result column="unit" property="unit" javaType="java.lang.String"/>
+		<result column="qq" property="qq" javaType="java.lang.String"/>
+		<result column="area" property="area" javaType="java.lang.String"/>
+		<result column="avatar" property="avatar" javaType="java.lang.String"/>
+		<result column="status" property="status" javaType="java.lang.Integer"/>
+		<result column="createtime" property="createDate" javaType="java.util.Date"/>
+		<result column="updatetime" property="updateDate" javaType="java.util.Date"/>
+		<result column="token" property="token" javaType="java.lang.String"/>
+		<result column="tv_id" property="tvId" javaType="java.lang.Integer"/>
+		<result column="role_id" property="roleId" javaType="java.lang.Integer"/>
+		<result column="tv_name" property="officeName" javaType="java.lang.String" />
+		<result column="deviceType" property="deviceType" javaType="java.lang.Integer"/>
+		<result column="deviceToken" property="deviceToken" javaType="java.lang.String"/>
+		<result column="sales" property="sales" javaType="java.lang.Integer"/>
+		<result column="isPUser" property="isPUser" javaType="java.lang.Integer"/>
+		<result column="countBonus" property="countBonus" javaType="java.lang.Integer"/>
+		<result column="countDays" property="countDays" javaType="java.lang.Integer"/>
+		<association property="sale" column="sales" select="com.magic.sangha.mapper.IGroupUserMapper.findByIdToName"></association>
+		<association property="role" column="role_id"  select="com.magic.sangha.mapper.IRoleMapper.findById" javaType="RoleBean"></association>
+	</resultMap>
+	
+	
+	<select id="login" resultMap="BaseUser">
+		select * from t_user where mobile=#{mobile} and  pwd=#{password} 
+	</select>
+	
+	<insert id="register" parameterType="UserBean">
+	
+		insert into t_user(id,mobile,real_name,pwd,email,unit,qq,area,avatar,status,createtime,updatetime,sales,pre_sales,tech_person,role_id,tv_id,deviceType,deviceToken,isPUser) values
+		(#{user.id},#{user.mobile},#{user.realName},#{user.password},#{user.email},#{user.unit},#{user.qq},#{user.area},#{user.avatar},#{user.status},#{user.createDate}
+		,#{user.updateDate},#{user.sales},#{user.preSales.id},#{user.techPerson.id},#{user.roleId},#{user.tvId},#{user.deviceType},#{user.deviceToken},#{user.isPUser})
+	
+	</insert>
+	
+	<select id="findByToken" resultMap="BaseUser">
+		select * from t_user where token=#{token}
+	</select>
+	<update id="updateToken">
+		update t_user set token=#{token},updatetime=#{updatetime} where id=#{id}
+	</update>
+	<select id="verifiMobile" resultType="java.lang.Integer">
+		select id from t_user where mobile=#{mobile}
+	</select>
+	
+	<update id="updateUser">
+	
+		update t_user set 
+		
+		<if test="user.password != null">
+			pwd = #{user.password},
+		</if>
+		<if test="user.realName != null">
+			real_name = #{user.realName},
+		</if>
+		<if test="user.email != null">
+			email=#{user.email},
+		</if>
+		<if test="user.qq != null">
+			qq=#{user.qq},
+		</if>
+		<if test="user.sales != null">
+			sales=#{user.sales},
+		</if>
+		<if test="user.techPerson != null">
+			tech_person=#{user.techPerson.id},
+		</if>
+		<if test="user.area != null">
+			area=#{user.area},
+		</if>
+		<if test="user.avatar != null">
+			avatar=#{user.avatar},
+		</if>
+		<if test="user.role != null">
+			role_id=#{user.role.id},
+		</if>
+		<if test="user.roleId != null">
+			role_id=#{user.roleId},
+		</if>
+		<if test="user.status != null">
+			status=#{user.status},
+		</if>
+		<if test="user.token != null">
+			token=#{user.token},
+		</if>
+		<if test="user.isPUser != null">
+			isPUser=#{user.isPUser},
+		</if>
+		<if test="user.tvId != null">
+			tv_id=#{user.tvId},
+		</if>
+		<if test="user.updateDate != null">
+			`updatetime`=#{user.updateDate},
+		</if>
+		<if test="user.mobile != null">
+			mobile=#{user.mobile}
+		</if>
+		where id=#{user.id}
+	</update>
+	
+	<select id="findByMobile" resultMap="BaseUser">
+		select id, mobile,pwd from t_user where  mobile=#{mobile}
+	</select>
+	
+	<select id="findById" resultMap="BaseUser">
+		select id,avatar,mobile,real_name,tv_id,deviceType,deviceToken,token  from t_user where id=#{id}
+	</select>
+	
+	<update id="updateDeviceTypeAndToken" >
+		update t_user set deviceType=#{deviceType},deviceToken=#{deviceToken} where id=#{id}
+	</update>
+
+	<select id="findByTVId" resultMap="BaseUser">
+		select id,mobile,real_name,avatar from t_user where tv_id=#{tvId}
+	</select>
+	
+	<select id="findByAudit" resultMap="BaseUser">
+		SELECT u.*,t.stationName tv_name from t_user u,t_tv t where u.tv_id = t.id 
+		<if test="isAduit != null">
+			<if test="isAduit == 10 ">
+				and (`status`=1 or `status`=3 )
+			</if>
+			<if test="isAduit != 10">
+				and `status`=#{isAduit} 
+			</if>
+		</if>
+			<if test="userName != null">
+				and real_name like '%${userName}%'
+			</if>
+		
+		ORDER BY createtime DESC limit #{limit},#{pageLimit}
+	</select>
+	<select id="countByStatus" resultType="java.lang.Integer">
+		select count(*) from t_user where 1=1
+		<if test="status != null">
+			<if test="status == 10 ">
+				and (`status`=1 or `status`=3 )
+			</if>
+			<if test="status != 10">
+				and `status`=#{status} 
+			</if>
+		</if>
+		<if test="userName != null">
+				and real_name like '%${userName}%'
+		</if>
+	</select>
+	
+	<update id="updateStatus">
+	
+		update t_user set status=#{status},isPUser=#{isPUser} where id=#{id}
+		
+	</update>
+	
+	<select id="findByEmail" resultMap="BaseUser">
+		select id,email,mobile from t_user where email=#{email}
+	</select>
+	
+	<select id="findByIdAllFields" resultMap="BaseUser" >
+		select u.*,t.stationName tv_name from t_user u,t_tv t where u.tv_id = t.id and u.id=#{id}
+	</select>
+	
+	<select id="findAllToToken"  resultMap="BaseUser" >
+		select id,deviceToken,deviceType  from t_user
+	</select>
+	
+	<select id="queryCountSign" resultMap="BaseUser" >
+		SELECT sum(s.bonus) countBonus,count(s.id) countDays,g.id as id,g.real_name,g.mobile from  t_user g LEFT JOIN t_sign s  ON g.id=s.user_id  
+		where 1=1 
+			<if test="realName != null">
+				and g.real_name LIKE '%${realName}%'
+			</if>
+			 GROUP BY g.id ORDER BY countBonus desc	
+			 <if test="limit != null and limitSize != null">
+			 	LIMIT #{limit},#{limitSize}
+			 </if>
+	</select>
+	
+	<select id="countSign" resultType="java.lang.Integer">
+		select count(*) from t_user where 1=1
+		<if test="realName != null">
+				and real_name LIKE '%${realName}%'
+			</if>
+	</select>
+	
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

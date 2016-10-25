@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.magic.sangha.mapper.ICCGroupUserMapper">
+
+	<resultMap type="CCGroupUserBean" id="BaseCC">
+	
+		<result column="id" property="id" javaType="java.lang.Integer"/>
+		<result column="order_id" property="orderId" javaType="java.lang.Integer"/>
+		<result column="groupuser_id" property="groupuserId" javaType="java.lang.Integer"/>
+		
+	</resultMap>
+	
+	<insert id="batchAdd">
+		insert into t_cc_groupuser (order_id,groupuser_id) values
+		<foreach collection="ccs" item="cc" index="index" separator=",">
+			(#{cc.orderId},#{cc.groupuserId})
+		</foreach>
+	</insert>
+	
+	<select id="findBygroupUserId" resultMap="BaseCC">
+	
+		select * from t_cc_groupuser where groupuser_id=#{userId}
+	
+	</select>
+	
+	<select id="findByOrderId"  resultMap="BaseCC">
+		select * from t_cc_groupuser where order_id=#{orderId}
+	</select>
+	<select id="countOrders" resultType="java.lang.Integer">
+		select count(*) from t_cc_groupuser c , t_order o  where  c.order_id=o.id  AND o.isvalid=0 and c.groupuser_id=#{groupUserId}
+	</select>
+	
+	<select id="countOrderByItem" resultType="java.lang.Integer">
+		select count(*) from t_cc_groupuser c , t_order o  where  c.order_id=o.id  AND o.isvalid=0
+		<if test="status == 0">
+			and (o.`status`=2004 or o.`status`=2005)
+		</if>
+		<if test="status==1">
+			and (o.`status`=2001 or o.`status`=2002 or o.`status`=2003)
+		</if>
+		<if test="groupUserId != null">
+			and c.groupuser_id=#{groupUserId}
+		</if>
+		<if test="categoryId != null">
+			and o.order_category_id=#{categoryId}
+		</if>
+		<if test="startDate != null and endDate != null">
+			and o.createtime BETWEEN #{startDate} AND #{endDate}
+		</if>
+	</select>
+	
+</mapper>

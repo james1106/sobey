@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.magic.sangha.mapper.ITSCHeadTechDecribeMapper">
+
+	<resultMap type="TSCHeadTechDecribeBean" id="BaseTSCDecribe">
+	
+		<result column="id" property="id" javaType="java.lang.Integer"/>
+		<result column="content" property="content" javaType="java.lang.String"/>
+		<result column="videos" property="videos" javaType="java.lang.String"/>
+		<result column="images" property="images" javaType="java.lang.String"/>
+		<result column="voices" property="voices" javaType="java.lang.String"/>
+		<result column="createtime" property="createTime" javaType="java.util.Date"/>
+		<result column="head_tech_id" property="headTechId" javaType="java.lang.Integer"/>
+		<result column="tsc_id" property="TSCId" javaType="java.lang.Integer"/>
+		<result column="order_id" property="orderId" javaType="java.lang.Integer"/>
+		
+	</resultMap>
+	
+	
+	<insert id="addDecribe">
+		insert into t_order_tsc_headtech_describe (content,videos,images,voices,createtime,head_tech_id,tsc_id,order_id) values(#{decribe.content},#{decribe.videos},#{decribe.images},#{decribe.voices},
+		#{decribe.createTime},#{decribe.headTechId},#{decribe.TSCId},#{decribe.orderId})
+	</insert>
+	
+	<select id="findByOrderId" resultMap="BaseTSCDecribe">
+		select * from t_order_tsc_headtech_describe where order_id=#{orderId} ORDER BY createtime
+	</select>
+	
+		
+	<select id="queryTSC" parameterType="java.util.Map" resultMap="BaseTSCDecribe">
+		select * from t_order_tsc_headtech_describe where order_id=#{orderId} and tsc_id=#{tscId} ORDER BY createtime desc limit 0,1
+	</select>
+	<select id="queryHeadTech" parameterType="java.util.Map" resultMap="BaseTSCDecribe">
+		select * from t_order_tsc_headtech_describe where order_id=#{orderId} and head_tech_id=#{headTechId} ORDER BY createtime desc limit 0,1
+	</select>
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

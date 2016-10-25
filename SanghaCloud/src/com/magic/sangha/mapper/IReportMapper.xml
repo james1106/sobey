@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.magic.sangha.mapper.IReportMapper">
+
+	<resultMap type="ReportBean" id="BaseReport">
+		<result column="id" property="id" javaType="java.lang.Integer"/>
+		<result column="eventID" property="eventID" javaType="java.lang.String"/>
+		<result column="typeID" property="typeID" javaType="java.lang.String"/>
+		<result column="level" property="level" javaType="java.lang.String"/>
+		<result column="resourceKey" property="resourceKey" javaType="java.lang.String"/>
+		<result column="stationCode" property="stationCode" javaType="java.lang.String"/>
+		<result column="hostKey" property="hostKey" javaType="java.lang.String"/>
+		<result column="time" property="time" javaType="java.util.Date"/>
+		<result column="solutionTime" property="solutionTime" javaType="java.lang.String"/>
+		<result column="reason" property="reason" javaType="java.lang.String"/>
+		<result column="processingResult" property="processingResult" javaType="java.lang.String"/>
+		<result column="get_time" property="getTime" javaType="java.lang.String" />
+		<result column="interIPAddress" property="interIPAddress" javaType="java.lang.String"/>
+		<result column="hostName" property="hostName" javaType="java.lang.String"/>
+		<result column="createtime" property="createTime" javaType="java.util.Date"/>
+	</resultMap>
+	
+	<insert id="batchAddReport">
+		insert into t_events (`eventID`,`typeID`,`level`,`resourceKey`,`stationCode`,`hostKey`,`time`,`solutionTime`,`reason`,`processingResult`,`get_time`,`createtime`) values
+		<foreach collection="reports" item="report" index="index" separator=",">
+			(#{report.eventID},#{report.typeID},#{report.level},#{report.resourceKey},#{report.stationCode},#{report.hostKey},#{report.time},#{report.solutionTime},#{report.reason},#{report.processingResult},
+			#{report.getTime},#{report.createTime})
+		</foreach>
+	</insert>
+	
+	<select id="findReportByPage" resultMap="BaseReport">
+	
+		SELECT e.hostKey,e.time,e.reason,d.hostName,d.interIPAddress FROM (
+			SELECT * FROM t_events WHERE 1=1 
+				<if test="stationCodes != null">
+						and stationCode in
+				<foreach collection="stationCodes" item="stationCode" index="index" open="(" separator="," close=")">
+					#{stationCode}
+				</foreach>
+		</if>
+		ORDER BY id DESC 
+			<if test="limit != null">
+				limit #{limit},#{limitSize}
+			</if>
+		) e LEFT JOIN t_device_list d ON e.hostKey = d.hostKey
+		WHERE 1=1 
+		<if test="groupCode != null">
+			and d.groupCode = #{groupCode}
+		</if>
+	
+		<!-- SELECT e.hostKey,e.time,e.reason,d.hostName,d.interIPAddress from t_events e left join   t_device_list d  on e.hostKey = d.hostKey where 1=1
+		<if test="stationCodes != null">
+			and e.stationCode in
+			<foreach collection="stationCodes" item="stationCode" index="index" open="(" separator="," close=")">
+				#{stationCode}
+			</foreach>
+		</if>
+		<if test="groupCode != null">
+			and d.groupCode = #{groupCode}
+		</if>
+		ORDER BY e.id ASC 
+		<if test="limit != null">
+			limit #{limit},#{limitSize}
+		</if> -->
+	</select>
+	
+	<select id="countReport" resultType="java.lang.Integer">
+		select count(*)  from t_device_list d,t_events e where e.hostKey = d.hostKey 
+		<if test="stationCodes != null">
+			and e.stationCode in
+			<foreach collection="stationCodes" item="stationCode" index="index" open="(" separator="," close=")">
+				#{stationCode}
+			</foreach>
+		</if>
+		<if test="groupCode != null">
+			and d.groupCode = #{groupCode}
+		</if>
+	</select>
+	
+	<select id="findNewestUpdateTime" resultMap="BaseReport">
+		select get_time from t_events where 1=1 ORDER BY id ASC limit 0,1
+	</select>
+	
+	<delete id="delClearReport">
+		<![CDATA[
+		delete from t_events where time < #{targetDate}
+		]]>
+	</delete>
+
+
+</mapper>

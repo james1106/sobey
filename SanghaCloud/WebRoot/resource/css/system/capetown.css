@@ -1,0 +1,134 @@
+*{
+	font-family: "arial, helvetica, sans-serif";
+}
+.mui-content{
+	background: #fff;
+}
+.mui-content .mui-scroll{
+	padding: 20px;
+}
+.mui-content .titleBox .title{
+	text-align: center;
+	color: #000;
+	font-weight: bold;	
+	font-size: 18px;
+}
+.mui-content .titleBox .subtitle{
+	text-align: right;
+	font-weight: bold;
+	color: #000;
+	font-size: 16px;
+	padding-right: 30px;
+}
+.mui-content .titleBox .introduction{
+	font-size: 13px;
+	text-align: left;
+	padding-right: 10px;
+	color: #000000;
+}
+.mui-content .text .paragraphone,.paragraptwo,.paragrapthree{
+	color: #000000;
+	font-size: 14px;
+	text-indent: 2em;
+	text-align: left;
+}
+.mui-content .text img{
+	width: 100%;
+	display: block;
+}
+.mui-content .textlist{
+	height: 200px;
+	margin-top: 100px;
+	position: relative;
+}
+
+.mui-content .textlist p.title{
+	font-size: 20px;
+	font-weight: bold;
+	color: #000000;
+	text-align: center;
+	line-height: 30px;
+}
+.mui-content .textlist ul.list{
+	width: 50%;
+	height: 150px;
+	position: absolute;
+	top:70px;
+	left: 0px;
+	list-style: square;
+	color:#000000;
+	font-size: 14px;
+	padding-left: 20px;
+}
+.mui-content .textlist img{
+	width: 50%;
+	height: 150px;
+	position: absolute;
+	top: 70px;
+	right: 0;
+}
+.confirm{
+	 display:none; 
+	position:fixed;
+	z-index:10000;
+	top:0;
+	right:0;
+	bottom:0;
+	left:0;
+	background:rgba(0,0,0,0.2);
+}
+.confirm-dialog{
+	width:70%;
+	position:absolute;
+	top:35%;
+	left:50%;
+	margin-left:-35%;
+}
+.confirm-content{
+	border:1px solid #ddd;
+	border-radius:10px;
+	background:#fff;
+}
+.confirm ul{
+	margin:0px;
+	list-style:none;
+	padding-left:0px;
+	text-align:center;
+}
+.confirm ul li{
+	padding:8px 10px;
+	border-bottom:1px solid #ddd;
+}
+
+.model{
+	 display:none; 
+	position:fixed;
+	z-index:10000;
+	top:0;
+	right:0;
+	bottom:0;
+	left:0;
+	background:rgba(0,0,0,0.2);
+}
+.model-dialog{
+	width:70%;
+	position:absolute;
+	top:35%;
+	left:50%;
+	margin-left:-35%;
+}
+.model-content{
+	border:1px solid #ddd;
+	border-radius:10px;
+	background:#fff;
+}
+.model ul{
+	margin:0px;
+	list-style:none;
+	padding-left:0px;
+	text-align:center;
+}
+.model ul li{
+	padding:8px 10px;
+	border-bottom:1px solid #ddd;
+}

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.magic.sangha.mapper.ITVMapper">
+
+	<resultMap type="TVBean" id="BaseTV">
+		<result column="id" property="id" javaType="java.lang.Integer"/>
+		<result column="logo" property="logo" javaType="java.lang.String"/>
+		<result column="stationName" property="tvName" javaType="java.lang.String"/>
+		<result column="officeName" property="officeName" javaType="java.lang.String"/>
+		<result column="office_id" property="officeId" javaType="java.lang.Integer"/>
+		<result column="stationCode" property="stationCode" javaType="java.lang.String"/>
+		<result column="type" property="type" javaType="java.lang.Integer"/>
+	</resultMap>
+	
+	
+	<insert id="addTV">
+		insert into t_tv(stationName,office_id,logo,stationCode,`address`,`province`,`city`,`district`,`street`,`streetNumber`,`lat`,`lng`,`type`) values
+		 (#{tv.tvName},#{tv.officeId},#{tv.logo},#{tv.stationCode},#{tv.address},#{tv.province},#{tv.city},#{tv.district},#{tv.street},#{tv.streetNumber},#{tv.lat},#{tv.lng},#{tv.type})
+	</insert>
+	
+	<insert id="batchAddTV">
+	
+		insert into t_tv(stationName,office_id,logo,stationCode,`address`,`province`,`city`,`district`,`street`,`streetNumber`,`lat`,`lng`) values
+		
+		<foreach collection="tvs" item="tv" index="index" separator=",">
+		
+			(#{tv.tvName},#{tv.officeId},#{tv.logo},#{tv.stationCode},#{tv.address},#{tv.province},#{tv.city},#{tv.district},#{tv.street},#{tv.streetNumber},#{tv.lat},#{tv.lng})
+		
+		</foreach>
+	
+	</insert>
+	
+	<select id="findByOfficeId" resultMap="BaseTV">
+		select * from t_tv where office_id = #{officeId}
+	</select>
+	
+	<select id="findLikeTVName" resultMap="BaseTV">
+		select * from t_tv 
+		<if test="tvName != null">
+			where stationName like '%${tvName}%'
+		</if>
+		
+	</select>
+	
+	<select id="findById" resultMap="BaseTV">
+		select * from t_tv where id=#{id}
+	</select>
+	
+	<select id="findAll" resultMap="BaseTV">
+		select * from t_tv
+	</select>
+	
+	<select id="findTVByoffice"  resultMap="BaseTV">
+		SELECT t.*,g.office_name as officeName from t_tv as t LEFT JOIN t_group_office as g ON t.office_id=g.id WHERE 1=1
+		<if test="officeStatus == 1">
+			and t.office_id is not null
+		</if>
+		<if test="tvName != null">
+			and t.stationName like '%${tvName}%'
+		</if>
+		<if test="officeStatus == 2">
+			and t.office_id is null
+		</if>
+		ORDER BY t.id limit #{limit},#{limitSize}
+	</select>
+	
+	<select id="countTVByoffice" resultType="java.lang.Integer">
+		select count(*) from t_tv where 1=1
+		<if test="officeStatus == 1">
+			and office_id is not null
+		</if>
+		<if test="tvName != null">
+			and stationName like '%${tvName}%'
+		</if>
+		<if test="officeStatus == 2">
+			and office_id is null
+		</if>
+	</select>
+	
+	<update id="updateOffice">
+		update t_tv set office_id=#{officeId} where id=#{id}
+	</update>
+	
+	<select id="findByUserId"  resultMap="BaseTV">
+		select id,stationCode,stationName,office_id from t_tv where id in (select tv_id from t_user where id=#{userId})
+	</select>
+	
+	<select id="findByGroupUser" resultMap="BaseTV" >
+		SELECT DISTINCT v.id,v.stationCode,v.stationName,v.office_id  from t_tv v LEFT JOIN t_user u ON v.id=u.tv_id JOIN t_order o ON o.user_id=u.id where o.isvalid = 0 
+		<if test="roleId==3">
+			<!-- 客服 -->
+			and o.service_id=#{groupUserId}
+		</if>
+		<if test="roleId==8">
+			<!-- 研发 -->
+			and o.develop_id=#{groupUserId}
+		</if>
+		<if test="roleId == 10">
+			<!-- 分公司技术 -->
+			and o.tech_id=#{groupUserId}
+		</if>
+		<if test="roleId == 11">
+			<!-- 总部技术支持 -->
+			and o.head_tech_id=#{groupUserId}
+		</if>
+		<if test="roleId == null">
+			<!--  如果是被抄送的人员 -->
+			and o.id IN (SELECT order_id from t_cc_groupuser where groupuser_id = #{groupUserId})
+		</if>
+	</select>
+	
+	<select id="dynamicGetTvs" resultMap="BaseTV">
+		select id,stationName from t_tv where 1=1
+		<if test="tvName != null">
+			and stationName like '%${tvName}%'
+		</if>
+	</select>
+	<select id="queryTVByTVName" resultType="java.lang.Integer">
+		select count(*) from t_tv where 1=1
+		<if test="tvName != null">
+			and stationName=#{tvName}
+		</if>
+	</select>
+	
+	<select id="getTVByUserType" resultMap="BaseTV">
+		select id,stationName from t_tv where stationCode is not null
+		<!-- 	//  userType 员工类型 0 总公司 1 分公司 2 办事处 -->
+		<if test="userType != null">
+			<if test="userType == 2">
+				and office_id in (SELECT office_id from t_group_user where id=#{userId})
+			</if>
+			<if test="userType == 1">
+				and office_id in (SELECT office_id from t_company where id IN (SELECT company_id from t_group_user where id=#{userId}))
+			</if>
+		</if>
+	</select>
+	
+	<update id="updateTV">
+		update t_tv set stationName=#{tv.tvName},stationCode=#{tv.stationCode} where id=#{tv.id}
+	</update>
+
+</mapper>

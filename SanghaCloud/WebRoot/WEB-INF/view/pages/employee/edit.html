@@ -1,0 +1,310 @@
+﻿<!DOCTYPE html>
+<!--
+BeyondAdmin - Responsive Admin Dashboard Template build with Twitter Bootstrap 3.2.0
+Version: 1.0.0
+Purchase: http://wrapbootstrap.com
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- Head -->
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+
+    <meta name="description" content="Dashboard" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="shortcut icon" href="../../resource/resource/assets/img/favicon.png" type="image/x-icon">
+
+    <!--Basic Styles-->
+    <link href="../../resource/assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link id="bootstrap-rtl-link" href="" rel="stylesheet" />
+    <link href="../../resource/assets/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="../../resource/assets/css/weather-icons.min.css" rel="stylesheet" />
+
+    <!--Fonts-->
+
+    <!--Beyond styles-->
+    <link href="../../resource/assets/css/beyond.min.css" rel="stylesheet" type="text/css" />
+    <link href="../../resource/assets/css/demo.min.css" rel="stylesheet" />
+    <link href="../../resource/assets/css/typicons.min.css" rel="stylesheet" />
+    <link href="../../resource/assets/css/animate.min.css" rel="stylesheet" />
+    <link href="../../resource/assets/css/skins/deepblue.min.css" rel="stylesheet" type="text/css" />
+
+	<link href="../../resource/css/common.css" rel="stylesheet" />
+    <script src="../../resource/assets/js/skins.min.js"></script>
+    
+  
+</head>
+<!-- /Head -->
+<!-- Body -->
+<body>
+    <div class="page-breadcrumbs">
+        <ul class="breadcrumb">
+            <li><a href="javascript:getPage('main.html')">首页</a></li>
+            <li class="active">编辑比赛</li>
+        </ul>
+    </div>
+    <div class="header-title">
+	    <h1>
+	         比赛
+	        <small>
+	            Play
+	        </small>
+	    </h1>
+	</div>
+    <div class="page-body">
+		<div class="widget">
+			<div class="widget-header ">
+                <span class="widget-caption">编辑比赛</span>
+            </div>
+            <div class="widget-body">
+            	<div id="registration-form">
+                    <form role="form">
+                        <div class="form-group">
+                            <label>联赛</label>
+                            <span class="input-icon icon-right">
+                            	<select id="leagueName" class="form-control" >
+                                    <option value="" >请选择联赛</option>
+                                    <option value="AL" >Alabama</option>
+                                    <option value="AK" >Alaska</option>
+                                    <option value="AZ" >Arizona</option>
+                                    <option value="AR" >Arkansas</option>
+                                </select>
+                            </span>
+                        </div>
+                        <div class="form-group">
+                            <label>主队</label>
+                            <span class="input-icon icon-right">
+                            	<select id="zteamName" class="form-control" >
+                                    <option value="" >请选择队伍</option>
+                                    <option value="AL" >Alabama</option>
+                                    <option value="AK" >Alaska</option>
+                                    <option value="AZ" >Arizona</option>
+                                    <option value="AR" >Arkansas</option>
+                                </select>
+                            </span>
+                        </div>
+                        <div class="form-group">
+                            <label>主队报名</label>
+                            <span class="input-icon icon-right">
+                            	<select id="zteamPeople" multiple="multiple" class="form-control">
+                                    <option value="AL" selected="selected" >Alabama</option>
+                                    <option value="AK" selected="selected" >Alaska</option>
+                                    <option value="AZ" >Arizona</option>
+                                    <option value="AR" >Arkansas</option>
+                                    <option value="CA" >California</option>
+                                    <option value="CO" >Colorado</option>
+                                    <option value="CT" >Connecticut</option>
+                                    <option value="DE" >Delaware</option>
+                                    <option value="FL" >Florida</option>
+                                    <option value="GA" >Georgia</option>
+                                    <option value="HI" >Hawaii</option>
+                                </select>
+                            </span>
+                        </div>
+                        <div class="form-group">
+                            <label>主队记分员</label>
+                            <span class="input-icon icon-right">
+                            	<select id="zteamScorer" class="form-control" >
+                                    <option value="CT" >Connecticut</option>
+                                    <option value="DE" >Delaware</option>
+                                    <option value="FL" >Florida</option>
+                                    <option value="GA" >Georgia</option>
+                                    <option value="HI" >Hawaii</option>
+                                </select>
+                            </span>
+                        </div> 
+                        <div class="form-group">
+                            <label>客队</label>
+                            <span class="input-icon icon-right">
+                            	<select id="kteamName" class="form-control" >
+                                    <option value="" >请选择队伍</option>
+                                    <option value="AL" >Alabama</option>
+                                    <option value="AK" >Alaska</option>
+                                    <option value="AZ" >Arizona</option>
+                                    <option value="AR" >Arkansas</option>
+                                </select>
+                            </span>
+                        </div>
+                        <div class="form-group">
+                            <label>客队报名</label>
+                            <span class="input-icon icon-right">
+                            	<select id="kteamPeople" multiple="multiple" class="form-control">
+                                    <option value="AL" selected="selected">Alabama</option>
+                                    <option value="AK" selected="selected">Alaska</option>
+                                    <option value="AZ" selected="selected">Arizona</option>
+                                    <option value="AR" selected="selected">Arkansas</option>
+                                    <option value="CA" >California</option>
+                                    <option value="CO" >Colorado</option>
+                                    <option value="CT" >Connecticut</option>
+                                    <option value="DE" >Delaware</option>
+                                    <option value="FL" >Florida</option>
+                                    <option value="GA" >Georgia</option>
+                                    <option value="HI" >Hawaii</option>
+                                </select>
+                            </span>
+                        </div>
+                        <div class="form-group">
+                            <label>客队记分员</label>
+                            <span class="input-icon icon-right">
+                            	<select id="kteamScorer" class="form-control">
+                                    <option value="CT" >Connecticut</option>
+                                    <option value="DE" >Delaware</option>
+                                    <option value="FL" >Florida</option>
+                                    <option value="GA" >Georgia</option>
+                                    <option value="HI" >Hawaii</option>
+                                </select>
+                            </span>
+                        </div> 
+                        <div class="form-group">
+                            <label>比赛日期</label>
+                            <span class="input-icon icon-right">
+                            	<div class="input-group">
+                            		<span class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </span>
+                                    <input class="form-control date-picker" id="date-picker" type="text">
+                                </div>
+                            </span>
+                        </div> 
+                        <div class="form-group">
+                            <label>比赛时间</label>
+                            <span class="input-icon icon-right">
+                            	<div class="input-group">
+                            		 <span class="input-group-addon">
+                                        <i class="fa fa-clock-o"></i>
+                                    </span>
+                            		<input class="form-control date-picker" id="time-picker" type="text">
+                                </div>
+                            </span>
+                        </div> 
+                        <div class="form-group">
+                            <label>赛制(5~11)</label>
+                            <span class="input-icon icon-right">
+                            	<div class="spinner">
+                            		<input class="form-control spinner-input" id="format" type="text">
+                            	</div>
+                            </span>
+                        </div> 
+                        <div class="form-group">
+                            <label>比赛状态</label>
+                            <span class="input-icon icon-right">
+                            	<select id="state" class="form-control" >
+                                    <option value="20">准备就绪</option>
+                                	<option value="0">约赛中</option>
+                                	<option value="10">已匹配</option>
+                                	<option value="15">开始准备</option>
+                                	<option value="30">比赛中</option>
+                                	<option value="100">结束赛后</option>
+                                </select>
+                            </span>
+                        </div> 
+                        <div class="form-group">
+                            <label>比赛场地</label>
+                            <span class="input-icon icon-right">
+                            	<select id="matchAddress" class="form-control">
+                                    <option value="CT" >Connecticut</option>
+                                    <option value="DE" >Delaware</option>
+                                    <option value="FL" >Florida</option>
+                                    <option value="GA" >Georgia</option>
+                                    <option value="HI" >Hawaii</option>
+                                    <option value="CT" >Connecticut</option>
+                                    <option value="DE" >Delaware</option>
+                                    <option value="FL" >Florida</option>
+                                    <option value="GA" >Georgia</option>
+                                    <option value="HI" >Hawaii</option>
+                                </select>
+                            </span>
+                        </div> 
+                        <div class="form-group">
+                            <!--<label>比赛场地</label>-->
+                            <span class="input-icon icon-right">
+                            	<div class="checkbox">
+                            		<label>
+	                            		<input type="checkbox" checked="checked">是否发送短信通知
+                            		</label>
+                            	</div>
+                            </span>
+                        </div> 
+                        <a href="list.html" target="iframe"  id="confirmBtn" class="btn btn-info">确认修改</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!--Basic Scripts-->
+    <script src="../../resource/assets/js/jquery-2.0.3.min.js"></script>
+    <script src="../../resource/assets/js/bootstrap.min.js"></script>
+
+    <!--Beyond Scripts-->
+    <script src="../../resource/assets/js/beyond.min.js"></script>
+    <!--Page Related Scripts-->
+    <!--Jquery Select2-->
+    <script src="../../resource/assets/js/select2/select2.js"></script>
+    <!--Bootstrap Tags Input-->
+    <script src="../../resource/assets/js/tagsinput/bootstrap-tagsinput.js"></script>
+    
+    <!--Bootstrap Date Picker-->
+    <script src="../../resource/assets/js/datetime/bootstrap-datepicker.js"></script>
+
+    <!--Bootstrap Time Picker-->
+    <script src="../../resource/assets/js/datetime/bootstrap-timepicker.js"></script>
+    
+        <!--Fuelux Spinner-->
+    <script src="../../resource/assets/js/fuelux/spinner/fuelux.spinner.min.js"></script>
+
+	<script src="../../resource/assets/js/toastr/toastr.js"></script>
+	<!--Common Scripts -->
+	<script src="../../resource/js/common.js"></script>
+	<script src="../../resource/laydate/laydate.js"></script>
+    <script>
+    	$("#leagueName").select2({
+            placeholder: "请选择联赛",
+            allowClear: true
+        });
+        $("#zteamName").select2({
+            placeholder: "请选择主队",
+            allowClear: true
+        });
+        $("#zteamPeople").select2({
+            placeholder: "请选择主队报名",
+            allowClear: true
+        });
+        $("#zteamScorer").select2({
+            placeholder: "请选择主队记分员",
+            allowClear: true
+        });
+        $("#kteamName").select2({
+            placeholder: "请选择客队",
+            allowClear: true
+        });
+        $("#kteamPeople").select2({
+            placeholder: "请选择客队报名",
+            allowClear: true
+        });
+        $("#kteamScorer").select2({
+            placeholder: "请选择客队记分员",
+            allowClear: true
+        });
+        $('#date-picker').datepicker({
+        	format:"yyyy-mm-dd"
+        });
+        $('#time-picker').timepicker({
+        	format:"yyyy-mm-dd"
+        });
+        
+        $('.spinner').spinner();
+        
+         $("#matchAddress").select2({
+            placeholder: "请选择比赛场地",
+            allowClear: true
+        });
+        $('#confirmBtn').click(function(){
+        	
+        })
+    </script>
+</body>
+<!--  /Body -->
+</html>

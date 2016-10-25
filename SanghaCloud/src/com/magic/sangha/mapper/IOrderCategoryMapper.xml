@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.magic.sangha.mapper.IOrderCategoryMapper">
+
+	<resultMap type="OrderCategoryBean" id="BaseCategory">
+		<result column="id" property="id" javaType="java.lang.Integer"/>
+		<result column="category_name" property="categoryName" javaType="java.lang.String"/>
+		<result column="category_type" property="type" javaType="java.lang.Integer"/>
+	</resultMap>
+	
+	
+	<select id="findByType" resultMap="BaseCategory">
+		select * from t_order_category where 1=1 
+		<if test="type != null">
+			and category_type=#{type}
+		</if>
+	</select>
+	
+	<select id="findById" resultMap="BaseCategory">
+		select * from t_order_category where id=#{id}
+	</select>
+	
+	<select id="findAll" resultMap="BaseCategory">
+		select * from t_order_category
+	</select>
+	
+	<select id="findByTypePage"  resultMap="BaseCategory">
+		select * from t_order_category where 1=1 
+		<if test="type != null">
+			and category_type=#{type}
+		</if>
+		<if test="limit != null and limitSize != null">
+			limit #{limit},#{limitSize}
+		</if>
+	</select>
+	
+	<select id="countByType" resultType="java.lang.Integer">
+		select count(*) from t_order_category where 1=1 
+		<if test="type != null">
+			and category_type=#{type}
+		</if>
+	</select>
+	
+	<update id="updateCategory">
+		
+		update t_order_category set  category_name=#{category.categoryName}   where id=#{category.id}
+	
+	</update>
+	
+	<insert id="batchAdd">
+		insert into t_order_category (category_name,category_type) values
+		<foreach collection="cateList" item="category" index="index" separator=",">
+			(#{category.categoryName},#{category.type})
+		</foreach>
+		
+	</insert>
+
+</mapper>

@@ -1,0 +1,17 @@
+{
+    "apkUrl":"http://7xnfyf.com1.z0.glb.clouddn.com/sobey-1.1.14-publish.apk",
+    "size":"19.4M",
+	"appName":"口袋小贝",
+	"changeLog":"
+	1.界面细节调整<br/>
+	2.系统更加稳定<br/>
+	3.注册时新增身份提示<br/>
+	4.可以把APP分享给朋友了
+	",
+	"created_at":"2016-09-22",
+	"isForce":0,
+	"versionName":"1.1.14",
+	"updateTips":"更新",
+	"versionCode":"52",
+	"status":1
+}

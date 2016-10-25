@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.magic.sangha.mapper.IVoteMapper">
+
+	<resultMap type="VoteBean" id="BaseVote">
+		<result column="id" property="id" javaType="java.lang.Integer"/>
+		<result column="vote_decript" property="describe" javaType="java.lang.String"/>
+		<result column="news_id" property="newsId" javaType="java.lang.Integer"/>
+		<result column="createtime" property="createTime" javaType="java.util.Date"/>
+		<result column="publisherName" property="publisherName" javaType="java.lang.String"/>
+		<result column="type" property="type" javaType="java.lang.String"/>
+		<result column="title" property="title" javaType="java.lang.String"/>
+		<result column="count" property="count" javaType="java.lang.Integer"/>
+	</resultMap>
+
+	<insert id="batchAddVote">
+		insert into t_vote(vote_decript,news_id,createtime) values
+		<foreach collection="votes" item="vote" index="index" separator=",">
+			(#{vote.describe},#{vote.newsId},#{vote.createTime})
+		</foreach>
+	</insert>
+	
+	<select id="queryVotePage" resultMap="BaseVote">
+		SELECT n.id as news_id ,n.title,g.real_name as publisherName,t.type from t_vote v LEFT JOIN t_news n on v.news_id=n.id  LEFT JOIN t_group_user g ON n.user_id=g.id LEFT JOIN t_news_type t ON t.id=n.typeId where 1=1
+		<if test="title != null">
+			and n.title like '%${title}%' 
+		</if>
+		GROUP BY n.id  ORDER BY v.createtime DESC
+		<if test="limit != null and limitSize != null">
+			limit #{limit},#{limitSize}
+		</if>
+	</select>
+	<select id="countVotePage" resultType="java.lang.Integer">
+		SELECT count(DISTINCT n.id) from t_vote v LEFT JOIN t_news n on v.news_id=n.id  where 1=1  
+		<if test="title != null">
+			and n.title like '%${title}%' 
+		</if>
+	</select>
+	
+	<select id="queryVoteByNewsId" resultMap="BaseVote">
+	
+		select count(*) count,v.createtime,v.vote_decript from t_vote_user tu,t_vote v where tu.vote_id=v.id 
+		and vote_id IN (SELECT id from t_vote where news_id=#{newsId}) GROUP BY vote_id
+	
+	</select>
+
+</mapper>

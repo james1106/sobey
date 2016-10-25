@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.magic.sangha.mapper.IRelationTVMapper">
+
+	<resultMap type="RelationTVBean" id="BaseRelation">
+	
+		<result column="id" property="id" javaType="java.lang.Integer"/>
+		<result column="group_user_id" property="groupUserId" javaType="java.lang.Integer"/>
+		<result column="tv_id" property="tvId" javaType="java.lang.Integer"/>
+		<result column="tv_name" property="tvName" javaType="java.lang.String"/>
+		<result column="stationCode" property="statiocCode" javaType="java.lang.String"/>
+		<association property="tv" column="tv_id" select="com.magic.sangha.mapper.ITVMapper.findById"></association>
+	</resultMap>
+	
+	<select id="findByUserId" resultMap="BaseRelation">
+		select * from t_relation_tv where group_user_id=#{userId}
+	</select>
+	
+	<insert id="addBatch">
+		insert into t_relation_tv(group_user_id,tv_id) values
+		<foreach collection="relations" item="relation" index="index" separator=",">
+			(#{relation.groupUserId},#{relation.tvId})
+		</foreach>
+	</insert>
+	
+	<delete id="del">
+		delete from t_relation_tv where group_user_id=#{groupUserId}
+	</delete>
+	
+	<select id="queryByUserId" resultMap="BaseRelation">
+		SELECT r.id,r.group_user_id,r.tv_id,v.stationName as tv_Name,v.stationCode as stationCode from t_relation_tv r , t_tv v   WHERE  r.tv_id=v.id AND v.stationCode IS NOT NULL and  r.group_user_id=#{userId}
+	</select>
+
+
+</mapper>

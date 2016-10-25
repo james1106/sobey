@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.magic.sangha.mapper.IHeadTechDevelopMapper">
+
+	<resultMap type="HeadTechDevelopBean" id="BasDevelopDecribe">
+	
+		<result column="id" property="id" javaType="java.lang.Integer"/>
+		<result column="content" property="content" javaType="java.lang.String"/>
+		<result column="videos" property="videos" javaType="java.lang.String"/>
+		<result column="images" property="images" javaType="java.lang.String"/>
+		<result column="voices" property="voices" javaType="java.lang.String"/>
+		<result column="createtime" property="createTime" javaType="java.util.Date"/>
+		<result column="head_tech_id" property="headTechId" javaType="java.lang.Integer"/>
+		<result column="develop_id" property="developId" javaType="java.lang.Integer"/>
+		<result column="order_id" property="orderId" javaType="java.lang.Integer"/>
+		<result column="type" property="type" javaType="java.lang.Integer"/>
+		<result column="realName" property="realName" javaType="java.lang.String"/>
+		<result column="email" property="email" javaType="java.lang.String"/>
+		<result column="mobile" property="mobile" javaType="java.lang.String"/>
+		<result column="count" property="count" javaType="java.lang.Integer"/>
+		<result column="order_number" property="orderNumber" javaType="java.lang.String"/>
+	</resultMap>
+	
+	
+	<insert id="addDecribe">
+		insert into t_order_headtech_develop_describe (content,videos,images,voices,createtime,head_tech_id,develop_id,order_id,type) values(#{decribe.content},#{decribe.videos},#{decribe.images},#{decribe.voices},
+		#{decribe.createTime},#{decribe.headTechId},#{decribe.developId},#{decribe.orderId},#{decribe.type})
+	</insert>
+	
+	<select id="queryHeadTech" parameterType="java.util.Map" resultMap="BasDevelopDecribe">
+		select * from t_order_headtech_develop_describe where order_id=#{orderId} and head_tech_id=#{headTechId} ORDER BY createtime desc limit 0,1
+	</select>
+	<select id="queryDevelop" parameterType="java.util.Map" resultMap="BasDevelopDecribe">
+		select * from t_order_headtech_develop_describe where order_id=#{orderId} and develop_id=#{developId} ORDER BY createtime desc limit 0,1
+	</select>
+	
+	<select id="findByOrderId" resultMap="BasDevelopDecribe">
+		select * from t_order_headtech_develop_describe where order_id=#{orderId} ORDER BY createtime
+	</select>
+	
+	<select id="countIsFeedback" resultType="java.lang.Integer">
+		select count(*) from t_order_headtech_develop_describe where 1=1
+		<if test="orderId != null">
+			and order_id=#{orderId} 
+		</if>
+		<if test="type != null">
+			and type=#{type} 
+		</if>
+	</select>
+
+	<select id="queryPage" resultMap="BasDevelopDecribe">
+	
+		SELECT  d.develop_id, g.real_name realName,g.mobile,g.email,d.createtime,count(*) count from t_order_headtech_develop_describe d ,  t_group_user g 
+		where d.type=1 and d.develop_id=g.id 
+		<if test="realName != null">
+			and g.real_name like '%${realName}%'
+		</if>
+		<if test="startTime != null  and endTime != null">
+			and d.createtime BETWEEN #{startTime} and #{endTime}
+		</if>
+		GROUP BY d.develop_id ORDER BY count DESC
+		<if test="limit != null and limitSize != null">
+			limit #{limit},#{limitSize}
+		</if>
+	</select>
+	
+	<select id="countPage" resultType="java.lang.Integer">
+		SELECT COUNT(DISTINCT d.develop_id) from t_order_headtech_develop_describe d, t_group_user g where d.type=1 and d.develop_id=g.id
+		<if test="realName != null">
+			and g.real_name like '%${realName}%'
+		</if>
+		<if test="startTime != null  and endTime != null">
+			and d.createtime BETWEEN #{startTime} and #{endTime}
+		</if>
+	</select>
+
+	<select id="queryPageByDevelopId"  resultMap="BasDevelopDecribe">
+		SELECT d.id,d.createtime,o.order_number from t_order_headtech_develop_describe d,t_order o where d.order_id=o.id  and d.type=1 
+		<if test="developId != null">
+			and d.develop_id=#{developId}
+		</if>
+		<if test="orderNumber != null">
+			and o.order_number=#{orderNumber}
+		</if>
+		<if test="startTime != null  and endTime != null">
+			and d.createtime BETWEEN #{startTime} AND #{endTime}
+		</if>
+		ORDER BY d.createtime DESC
+		<if test="limit != null and limitSize != null">
+			limit #{limit},#{limitSize}
+		</if>
+	</select>
+
+	<select id="countPageByDevelopId" resultType="java.lang.Integer">
+		SELECT count(*) from t_order_headtech_develop_describe d,t_order o where d.order_id=o.id  and d.type=1 
+		<if test="developId != null">
+			and d.develop_id=#{developId}
+		</if>
+		<if test="orderNumber != null">
+			and o.order_number=#{orderNumber}
+		</if>
+		<if test="startTime != null  and endTime != null">
+			and d.createtime BETWEEN #{startTime} AND #{endTime}
+		</if>
+		
+	</select>
+
+
+
+
+
+
+</mapper>
+
+

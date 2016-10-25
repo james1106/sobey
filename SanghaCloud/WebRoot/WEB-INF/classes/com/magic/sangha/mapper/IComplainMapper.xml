@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.magic.sangha.mapper.IComplainMapper">
+
+	<resultMap type="ComplainBean" id="BaseComplain">
+	
+		<result column="id" property="id" javaType="java.lang.Integer"/>
+		<result column="type" property="type" javaType="java.lang.Integer"/>
+		<result column="createtime" property="createTime" javaType="java.util.Date"/>
+		<result column="order_id" property="orderId" javaType="java.lang.Integer"/>
+		<result column="content" property="content" javaType="java.lang.String"/>
+		<result column="orderNumber" property="orderNumber" javaType="java.lang.String"/>
+	</resultMap>
+	
+	
+	
+	<select id="findByOrderId" resultMap="BaseComplain">
+		select * from t_complaint  where order_id=#{orderId}
+	</select>
+	
+	<select id="queryComplainPage" resultMap="BaseComplain" >
+		select c.id,c.content,c.createtime,c.type,o.order_number as orderNumber from t_complaint c ,t_order o  
+		where o.id=c.order_id
+			<if test="startTime != null and endTime != null">
+				 and (c.createtime BETWEEN #{startTime} AND #{endTime})
+			</if>
+		  limit #{limit},#{limitSize}
+	</select>
+	<select id="countComplainByDate" resultType="java.lang.Integer">
+		select count(*) from t_complaint where 1=1
+		<if test="startTime != null and endTime != null">
+				 and (createtime BETWEEN #{startTime} AND #{endTime})
+			</if>
+	</select>
+
+
+</mapper>

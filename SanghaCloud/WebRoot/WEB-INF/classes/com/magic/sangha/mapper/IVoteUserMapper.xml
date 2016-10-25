@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.magic.sangha.mapper.IVoteUserMapper">
+	
+	<resultMap type="VoteUserBean" id="BaseVoteUser">
+		<result column="id" property="id" javaType="java.lang.Integer"/>
+		<result column="vote_id" property="voteId" javaType="java.lang.Integer"/>
+		<result column="user_id" property="userId" javaType="java.lang.Integer"/>
+		<result column="group_user_id" property="groupUserId" javaType="java.lang.Integer"/>
+		<result column="createtime" property="createTime" javaType="java.util.Date"/>
+		<result column="voteDecribe" property="voteDecribe" javaType="java.lang.String"/>
+		<result column="countVote" property="countVote" javaType="java.lang.Integer"/>
+		
+	</resultMap>
+	
+	
+	<insert id="addVoteUser">
+		insert into t_vote_user (vote_id,user_id,group_user_id,createtime) values (#{voteUser.voteId},#{voteUser.userId},#{voteUser.groupUserId},#{voteUser.createTime})
+	</insert>
+	
+	<select id="findVoteByUserId" resultMap="BaseVoteUser">
+		SELECT * from t_vote_user  where vote_id in (SELECT id from t_vote where news_id=#{newsId}) 
+		<if test="userId != null">
+			and user_id=#{userId}
+		</if>
+		<if test="groupUserId != null">
+			and group_user_id=#{groupUserId}
+		</if>
+	</select>
+	
+	<select id="countVoteByNewsId" resultMap="BaseVoteUser">
+		SELECT v.id as vote_id  ,v.vote_decript as voteDecribe ,count(u.id) as countVote from t_vote v LEFT JOIN t_vote_user u ON v.id=u.vote_id where v.id in (SELECT id from t_vote where news_id=#{newsId}) GROUP BY v.id
+	</select>
+	
+</mapper>

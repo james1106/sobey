@@ -1,0 +1,817 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.magic.sangha.mapper.IOrderMapper">
+
+	<resultMap type="OrderBean" id="BaseOrder">
+	
+		<result column="id" property="id" javaType="java.lang.Integer"/>
+		<result column="order_category_id" property="orderCategory" javaType="java.lang.Integer"/>
+		<result column="caName" property="orderCategoryName" javaType="java.lang.String"/>
+		<result column="order_describe" property="orderDescri" javaType="java.lang.String"/>
+		<result column="images" property="images" javaType="java.lang.String"/>
+		<result column="videos" property="videos" javaType="java.lang.String"/>
+		<result column="voices" property="voices" javaType="java.lang.String"/>
+		<result column="service_id" property="serviceId" javaType="java.lang.Integer"/>
+		<result column="status" property="status" javaType="java.lang.Integer"/>
+		<result column="service_check" property="serviceCheck" javaType="java.lang.Integer"/>
+		<result column="order_data" property="orderData" javaType="java.lang.String"/>
+		<result column="group_order_data" property="groupOrderData" javaType="java.lang.String"/>
+		<result column="head_tech_id" property="headTechId" javaType="java.lang.Integer"/>
+		<result column="tech_id" property="tscId" javaType="java.lang.Integer"/>
+		<result column="tech_check" property="techCheck" javaType="java.lang.Integer"/>
+		<result column="develop_id" property="decelopId" javaType="java.lang.Integer"/>
+		<result column="createtime" property="createTime" javaType="java.util.Date"/>
+		<result column="user_id" property="userId" javaType="java.lang.Integer"/>
+		<result column="cun" property="count" javaType="java.lang.Integer"/>
+		<result column="isvalid" property="isValid" javaType="java.lang.Integer"/>
+		<result column="service_comment" property="isServiceComment" javaType="java.lang.Integer"/>
+		<result column="tsc_comment" property="isTSCComment" javaType="java.lang.Integer"/>
+		<result column="head_develop_comment" property="isHeadDevelopComment" javaType="java.lang.Integer"/>
+		<result column="head_teah_comment" property="isHeadTechComment" javaType="java.lang.Integer"/>
+		<result column="user_comment" property="isUsercomment" javaType="java.lang.Integer"/>
+		<result column="ishead_tech" property="isHeadTech" javaType="java.lang.Integer"/>
+		<result column="develop_check" property="developCheck" javaType="java.lang.Integer"/>
+		<result column="head_tech_check" property="headTechCheck" javaType="java.lang.Integer"/>
+		<result column="order_number" property="orderNumber" javaType="java.lang.String" />
+		<result column="categoryname" property="categoryName" javaType="java.lang.String"/>
+		<result column="tsc_isaccept" property="tscIsAccept" javaType="java.lang.Integer"/>
+		<result column="headtech_isaccept" property="headTechIsAccept" javaType="java.lang.Integer"/>
+		<result column="develop_isaccept" property="developIsAccept" javaType="java.lang.Integer"/>
+		<result column="service_isaccept" property="serviceIsAccept" javaType="java.lang.Integer"/>
+		<result column="userName" property="userName" javaType="java.lang.String"/>
+		<result column="serviceName" property="serviceName" javaType="java.lang.String"/>
+		<result column="tscName" property="tscName" javaType="java.lang.String"/>
+		<result column="headName" property="headTechName" javaType="java.lang.String"/>
+		<result column="developName" property="developName" javaType="java.lang.String"/>
+		<result column="update_time" property="updateTime" javaType="java.util.Date"/>
+		<result column="tech_starttime" property="techStartTime" javaType="java.util.Date"/>
+		<result column="tech_endtime" property="techEndTime" javaType="java.util.Date"/>
+		<result column="tvName" property="tvName" javaType="java.lang.String"/>
+		<result column="head_tech_starttime" property="headTechStartTime" javaType="java.util.Date"/>
+		<result column="head_tech_endtime" property="headTechEndTime" javaType="java.util.Date"/>
+		<association property="category" column="order_category_id" select="com.magic.sangha.mapper.IOrderCategoryMapper.findById"></association>
+		<association property="tscDecribe" column="{orderId=id,tscId=tech_id}" select="com.magic.sangha.mapper.IOrderDecribeMapper.queryByOrderIdAndTSC"></association>
+		<association property="headDecribe" column="{orderId=id,headTechId=head_tech_id}" select="com.magic.sangha.mapper.IOrderDecribeHeadTechMapper.queryHeadTech"></association>
+		<association property="headDecribeD" column="{orderId=id,headTechId=head_tech_id}" select="com.magic.sangha.mapper.IHeadTechDevelopMapper.queryHeadTech"></association>
+		<association property="developDecribe" column="{orderId=id,developId=develop_id}" select="com.magic.sangha.mapper.IHeadTechDevelopMapper.queryDevelop"></association>
+		<association property="tscDecribeD" column="{orderId=id,tscId=tech_id}" select="com.magic.sangha.mapper.ITSCHeadTechDecribeMapper.queryTSC"></association>
+		<association property="headDecribeT" column="{orderId=id,headTechId=head_tech_id}" select="com.magic.sangha.mapper.ITSCHeadTechDecribeMapper.queryHeadTech"></association>
+	</resultMap>
+	
+	<insert id="addOrder" useGeneratedKeys="true" keyProperty="order.id">
+		insert into t_order(order_category_id,order_describe,images,videos,voices,service_id,status,service_check,order_data,head_tech_id,tech_id,tech_check,develop_id,createtime,user_id,order_number,
+		isvalid,develop_check,head_tech_check,group_order_data) values 
+		(#{order.orderCategory},#{order.orderDescri},#{order.images},#{order.videos},#{order.voices},#{order.serviceId},#{order.status},#{order.serviceCheck},#{order.orderData},#{order.headTechId},
+		#{order.tscId},#{order.techCheck},#{order.decelopId},#{order.createTime},#{order.userId},#{order.orderNumber},#{order.isValid},#{order.developCheck},#{order.headTechCheck},#{order.groupOrderData})
+	</insert>
+	
+	<update id="updateIsComment">
+	
+		update t_order set
+		<if test="isServiceComment != null">
+			service_comment=#{isServiceComment},
+		</if> 
+		<if test="isTSCComment != null">
+			tsc_comment=#{isTSCComment},
+		</if> 
+		<if test="isHeadDevelopComment != null">
+			head_develop_comment=#{isHeadDevelopComment},
+		</if>
+		<if test="isHeadTechComment != null">
+			head_teah_comment=#{isHeadTechComment},
+		</if>
+		<if test="isUsercomment != null">
+			user_comment=#{isUsercomment},
+		</if>
+		<if test="id != null">
+			id=#{id}
+		</if>
+	 where id=#{id}
+	</update>
+	
+	<select id="findByStatus" resultMap="BaseOrder">
+		select * from t_order where 1=1
+		<if test="status != null ">
+			and status=#{status}
+		</if> 
+		<!-- 如果要查客服的订单 -->
+		<if test="isGroupUser == 0">
+			and service_id=#{groupUserId} and service_check=#{isCheck} 
+		</if>
+		<!-- 如果要查TSC的订单 -->
+		<if test="isGroupUser == 1">
+			and tech_id=#{groupUserId} and tech_check=#{isCheck}
+		</if>
+		limit #{pageSize},#{pageSizeLimit}
+	</select>
+	<!-- -->
+	<select id="countByStatus"  resultType="java.lang.Integer">
+		select count(*) from t_order where 1=1
+		<if test="status != null ">
+			and status=#{status}
+		</if>	 
+		<!-- 如果要查客服的订单-->
+		<if test="isGroupUser == 0">
+			and service_id=#{groupUserId} and service_check=#{isCheck}
+		</if>
+		<!-- 如果要查TSC的订单 -->
+		<if test="isGroupUser == 1">
+			and tech_id=#{groupUserId} and tech_check=#{isCheck}
+		</if>
+	</select>
+
+	<update id="updateOrderStatus">
+		update t_order set
+		<if test="orders.serviceId != null">
+			service_id=#{orders.serviceId},
+		</if>
+		<if test="orders.serviceCheck != null">
+			service_check=#{orders.serviceCheck},
+		</if>
+		<if test="orders.tscId != null">
+			tech_id=#{orders.tscId}, tech_check=#{orders.techCheck},
+		</if>
+		<if test="orders.techCheck != null">
+			tech_check=#{orders.techCheck},
+		</if>
+		<if test="orders.headTechId != null">
+			head_tech_id=#{orders.headTechId},
+		</if>
+		<if test="orders.headTechCheck != null">
+			head_tech_check=#{orders.headTechCheck},
+		</if>
+		<if test="orders.decelopId != null">
+			develop_id=#{orders.decelopId},
+		</if>
+		<if test="orders.developCheck != null">
+			develop_check=#{orders.developCheck},
+		</if>
+		<if test="orders.isHeadTech != null">
+			ishead_tech=#{orders.isHeadTech},
+		</if>
+		<if test="orders.tscIsAccept != null">
+			tsc_isaccept=#{orders.tscIsAccept},
+		</if>
+		<if test="orders.headTechIsAccept != null">
+			headtech_isaccept=#{orders.headTechIsAccept},
+		</if>
+		<if test="orders.developIsAccept != null">
+			develop_isaccept=#{orders.developIsAccept},
+		</if>
+		<if test="orders.serviceIsAccept != null">
+			service_isaccept=#{orders.serviceIsAccept},
+		</if>
+		<if test="orders.updateTime != null">
+			update_time=#{orders.updateTime},
+		</if>
+		<if test="orders.techStartTime != null">
+			tech_starttime=#{orders.techStartTime},
+		</if>
+		<if test="orders.techEndTime != null">
+			tech_endtime=#{orders.techEndTime},
+		</if>
+		<if test="orders.headTechStartTime != null">
+			head_tech_starttime=#{orders.headTechStartTime},
+		</if>
+		<if test="orders.headTechEndTime != null">
+			head_tech_endtime =#{orders.headTechEndTime},
+		</if>
+		<if test="orders.status != null">
+			status=#{orders.status}
+		</if>
+		where id=#{orders.id}
+	</update>
+	
+	<update id="updateOrderServiceCheck">
+		update t_order set
+		<if test="isCheck != null">
+			service_check=#{isCheck}
+		</if>
+		where id=#{orderId}
+	</update>
+	<update id="updateOrderTechCheck">
+		update t_order set
+		<if test="isCheck != null">
+			tech_check=#{isCheck}
+		</if>
+		where id=#{orderId}
+	</update> 
+	
+	<update id="updateHeadTechIsCheck">
+		update t_order set
+		<if test="isCheck != null">
+			head_tech_check=#{isCheck}
+		</if>
+		where id=#{id}
+	</update>
+	<update id="updateDevelopIsCheck">
+		update t_order set
+		<if test="isCheck != null">
+			develop_check=#{isCheck}
+		</if>
+		where id=#{id}
+	</update>
+	
+	<select id="findByStatusAndUser" resultMap="BaseOrder">
+		select * from t_order where 1=1
+		
+			<if test="status !=null ">
+				and status = #{status}
+				
+			</if>
+		<if test="userId != null">
+			and user_id=#{userId}
+		</if>
+		<if test="serviceId != null">
+			and service_id=#{serviceId}
+			<if test="serviceCheck != null">
+				<if test="serviceCheck != 3">
+					and service_check=#{serviceCheck}
+					<if test="serviceCheck == 1">
+						and ((tech_id is null and ishead_tech =0) or (tech_id  is null and ishead_tech =1 and  head_tech_check is  null) )
+					</if>
+					
+				</if>
+				<if test="serviceCheck == 3">
+					and service_check=1 and (tech_check is not null  or head_tech_check is not null )
+				</if>
+			</if>
+			<if test="order.isServiceComment != null">
+				and service_comment=#{order.isServiceComment} and (status=2004 or status =2005)
+			</if>
+			<if test="order.serviceIsAccept != null">
+				and service_isaccept=#{order.serviceIsAccept}
+			</if>
+		</if>
+		<if test="tscId != null">
+			and tech_id=#{tscId}
+			<if test="checked != null">
+					and tech_check=#{checked} and (status = 2002 or status=2001)
+			</if>
+			<if test="order.isTSCComment != null">
+				and tsc_comment=#{order.isTSCComment} and (status=2004 or status =2005)
+			</if>
+			<if test="order.tscIsAccept != null">
+				and tsc_isaccept=#{order.tscIsAccept} 
+			</if>
+		</if>
+		<if test="devolepId != null">
+			and develop_id=#{devolepId}
+			<if test="developCheck != null">
+				and develop_check=#{developCheck}
+			</if>
+			<if test="order.isHeadDevelopComment != null">
+				and head_develop_comment=#{order.isHeadDevelopComment} and (status=2004 or status =2005)
+			</if>
+			<if test="order.developIsAccept != null">
+				and develop_isaccept=#{order.developIsAccept}
+			</if>
+		</if>
+		
+		<if test="headTech != null">
+			and head_tech_id=#{headTech}
+			<if test="headTechCheck != null">
+				and head_tech_check=#{headTechCheck} and (status = 2002 or status=2001)
+			</if>
+			<if test="order.isHeadTechComment != null">
+				and head_teah_comment=#{order.isHeadTechComment} and (status=2004 or status =2005)
+			</if>
+			<if test="order.headTechIsAccept != null">
+				and headtech_isaccept=#{order.headTechIsAccept}
+			</if>
+		</if>
+		
+		and isvalid=0  ORDER BY createtime DESC limit #{pageSize},#{pageSizeLimit} 
+	</select>
+	
+	<select id="countByStatusAndUser" resultType="java.lang.Integer">
+		select count(*) from t_order where 1=1
+		
+		<if test="status != null">
+				and status=#{status}
+		</if>
+		<if test="userId != null">
+			and user_id=#{userId}
+		</if>
+		<if test="serviceId != null">
+			and service_id=#{serviceId}
+		</if>
+		<if test="tscId != null">
+			and tech_id=#{tscId}
+		</if>
+		<if test="devolepId != null">
+			and develop_id=#{devolepId}
+		</if>
+		and isvalid=0 
+	</select>
+	 
+	<select id="countMinOrder" resultMap="BaseOrder">
+		SELECT t.id as id,t.head_tech_id,t.develop_id,t.tech_id,  u.id as service_id, COUNT(t.id) as cun from t_group_user u LEFT JOIN t_order t ON u.id = t.service_id  where u.`status`=1 and u.isOnLine=0 and u.id IN (SELECT id from t_group_user where role_id=3 ) GROUP BY u.id ORDER BY cun ASC LIMIT 0,1
+	</select>
+	
+	<select id="findById" resultMap="BaseOrder">
+		select * from t_order where id=#{id}
+	</select>
+	
+	<select id="findByIdToOrderData" resultMap="BaseOrder">
+		select id,order_data from t_order where id=#{id}
+	</select>
+	
+	<update id="updateIsValid">
+		update t_order set isvalid=#{isValid} where id=#{id}
+	</update>
+	
+	<select id="batchQueryOrder" resultMap="BaseOrder">
+	
+		select * from t_order where   id  in
+		 <foreach collection="ids" item="id" open="(" close=")" separator=",">
+		 	#{id}
+		 </foreach>
+		
+		 
+		<if test="status !=null">
+			<if test="status == 2006">
+				and (status=2001 or status=2002)
+			</if>
+			<if test="status == 2007">
+				and (status=2004 or status=2005)
+			</if>
+			<if test="status != 2006 and status != 2007">
+				and status=#{status}
+			</if>
+		</if>
+		 
+		and isvalid=0  ORDER BY createtime DESC limit #{limit},#{limitSize}
+	</select>
+	
+	<update id="updateOrderData">
+		update t_order set order_data=#{orderData} where id=#{id}
+	</update>
+	
+	<update id="updateGroupOrderData">
+		update t_order set group_order_data=#{orderData} where id=#{id}
+	</update>
+	
+	<select id="countOrders" resultType="java.lang.Integer">
+	
+		select count(*) from t_order where 1=1
+		<if test="userId != null">
+			and user_id=#{userId}
+		</if>
+		<if test="serviceId != null">
+			and service_id=#{serviceId}
+		</if>
+		<if test="tscId != null">
+			and tech_id=#{tscId}
+		</if>
+		<if test="headTechId != null">
+			and head_tech_id=#{headTechId}
+		</if>
+		<if test="developId != null">
+			and develop_id=#{developId}
+		</if>
+		and isvalid=0
+	</select>
+	<!-- 按年月统计指定状态的订单数量 -->
+	<select id="countOrdersByMonth" resultType="java.lang.Integer">
+		SELECT count(*) from t_order where date_format(createtime,'%Y%m')=#{yearmonth}
+		<if test="status != null">
+			<if test="status == 0">
+				and (status=2004 or status=2005)
+			</if>
+			<if test="status == 1">
+				and (status=2001 or status=2002 or status=2003)
+			</if>
+		</if>
+		<if test="order.serviceId != null">
+			and service_id=#{order.serviceId}
+		</if>
+		<if test="order.tscId != null">
+			and tech_id=#{order.tscId}
+		</if>
+		<if test="order.headTechId != null">
+			and head_tech_id=#{order.headTechId}
+		</if>
+		<if test="order.decelopId != null">
+			and develop_id=#{order.decelopId}
+		</if>
+		<if test="order.userId != null">
+			and user_id=#{order.userId}
+		</if>
+		and isvalid=0
+	</select>
+
+	<select id="countOrdersByCategory" resultMap="BaseOrder">
+		
+	SELECT o.head_tech_id,o.develop_id,o.tech_id ,o.id as id, count(*) as cun ,c.category_name as caName from t_order o,t_order_category c where o.order_category_id=c.id and o.isvalid=0 and   date_format(createtime,'%Y%m')=#{yearmonth} 
+	
+		<if test="order.serviceId != null">
+			and service_id=#{order.serviceId}
+		</if>
+		<if test="order.tscId != null">
+			and tech_id=#{order.tscId}
+		</if>
+		<if test="order.headTechId != null">
+			and head_tech_id=#{order.headTechId}
+		</if>
+		<if test="order.decelopId != null">
+			and develop_id=#{order.decelopId}
+		</if>
+		<if test="order.userId != null">
+			and user_id=#{order.userId}
+		</if>
+	
+	GROUP BY o.order_category_id
+	
+	</select>
+	
+	<select id="batchQueryOrders" resultMap="BaseOrder">
+	
+		select head_tech_id,develop_id,tech_id , id, order_number,status,createtime from t_order where isvalid=0 and  id in
+		<foreach collection="ids" item="id" index="index" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+		
+	</select>
+	
+	<select id="batchQueryOrderByCategory" resultMap="BaseOrder">
+	
+		SELECT o.head_tech_id,o.develop_id,o.tech_id , o.id,o.createtime,o.order_number ,c.category_name as caName from t_order o, t_order_category c where o.order_category_id=c.id  and  o.isvalid=0   and o.id in
+		
+		<foreach collection="ids" item="id" index="index" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</select>
+	<!-- 统计待办任务 -->
+	<select id="countBacklog" resultType="java.lang.Integer">
+		select count(*) from t_order where 1=1
+		
+		
+		<!-- 客服 -->
+		<if test="order.serviceId != null">
+			and service_id=#{order.serviceId} 
+			<if test="order.status != null">
+			and `status`=#{order.status}
+			</if>
+			<if test="order.serviceCheck != null">
+				and service_check=#{order.serviceCheck}
+			</if>
+		</if>
+		
+		<!-- TSC 分公司技术 -->
+		<if test="order.tscId != null">
+			and tech_id=#{order.tscId} and (`status`=2001 or `status`=2002)
+			<if test="order.techCheck != null">
+				and tech_check=#{order.techCheck}
+			</if>
+		</if>
+		
+		<!-- 总部技术 -->
+		<if test="order.headTechId != null">
+			and head_tech_id=#{order.headTechId} and (`status`=2001 or `status`=2002)
+			<if test="order.headTechCheck != null">
+				and head_tech_check=#{order.headTechCheck}
+			</if>
+		</if>
+		<!-- 研发 -->
+		<if test="order.decelopId != null">
+			and develop_id=#{order.decelopId}
+			<if test="order.status != null">
+				and `status`=#{order.status}
+			</if>
+			<if test="order.developCheck != null">
+				and develop_check=#{order.developCheck}
+			</if>
+		</if>
+		 and  isvalid=0
+	</select>
+	<!-- 统计 待分配 -->
+	<select id="countAssigning" resultType="java.lang.Integer">
+		select count(*) from t_order where 1=1
+		
+		<if test="order.status != null">
+			and `status`=#{order.status}
+		</if>
+		<if test="order.serviceId != null">
+			and service_id=#{order.serviceId} 
+			<if test="order.serviceCheck != null">
+				and service_check=#{order.serviceCheck} 
+				<if test="order.serviceCheck == 1">
+					and ((tech_id is null and ishead_tech =0) or (tech_id  is null and ishead_tech =1 and  head_tech_check is  null) )
+				</if>
+			</if>
+		</if>
+		and  isvalid=0
+	</select>
+	
+	<!--  统计 待处理 -->
+	<select id="countPengding" resultType="java.lang.Integer">
+	
+		select count(*) from t_order where   isvalid=0
+		<!-- 用户 -->
+		<if test="order.userId != null">
+			and user_id=#{order.userId}
+			<if test="order.status != null">
+				and `status`=#{order.status}
+			</if>
+		</if>
+		<!-- 客服 已分配+技术已查看 并未接受-->
+		<if test="order.serviceId != null">
+			and service_id=#{order.serviceId} 
+			<if test="order.status != null">
+				and `status`=#{order.status}
+			</if>
+			and service_check=1 and (tech_check is not null  or head_tech_check is not null )
+			
+		</if>
+		<!--  TSC 待处理  -->
+		<if test="order.tscId != null">
+			and tech_id=#{order.tscId}   and (`status`=2001 or `status`=2002)
+			<if test="order.techCheck == 1">
+				and tech_check=#{order.techCheck} and tsc_isaccept=0 
+			</if>
+		</if>
+		<!-- 总部技术 -->
+		<if test="order.headTechId != null">
+			and head_tech_id=#{order.headTechId} and (`status`=2001 or `status`=2002)
+			<if test="order.status != null">
+				and `status`=#{order.status}
+			</if>
+			<if test="order.headTechCheck == 1">
+				and head_tech_check=#{order.headTechCheck} and headtech_isaccept=0
+			</if>
+		</if>
+		<!-- 研发 -->
+		<if test="order.decelopId != null">
+			and develop_id=#{order.decelopId}
+			<if test="order.status != null">
+				and `status`=#{order.status}
+			</if>
+			<if test="order.developCheck == 1">
+				and develop_check=#{order.developCheck} and develop_isaccept=0
+			</if>
+		</if>
+		
+	</select>
+	
+	<!-- 处理中 -->
+	<select id="countHandling" resultType="java.lang.Integer">
+		select count(*) from t_order where isvalid=0
+		<!-- 用户 -->
+		<if test="order.userId != null">
+			and user_id=#{order.userId}
+			<if test="order.status != null">
+				and `status`=#{order.status}
+			</if>
+		</if>
+		<!-- 客服 -->
+		<if test="order.serviceId != null">
+			and service_id=#{order.serviceId} 
+			<if test="order.status != null">
+				and `status`=#{order.status}
+			</if>
+			and ((tsc_isaccept=1 and ishead_tech=0) or (headtech_isaccept=1 and ishead_tech=1 ) )
+		</if>
+		
+		<!--  TSC 待处理  -->
+		<if test="order.tscId != null">
+			and tech_id=#{order.tscId}
+			<if test="order.status != null">
+				and `status`=#{order.status}
+			</if>
+			<if test="order.techCheck == 1">
+				and tech_check=#{order.techCheck} and tsc_isaccept=1
+			</if>
+		</if>
+		
+		<!-- 总部技术 -->
+		<if test="order.headTechId != null">
+			and head_tech_id=#{order.headTechId}
+			<if test="order.status != null">
+				and `status`=#{order.status}
+			</if>
+			<if test="order.headTechCheck == 1">
+				and head_tech_check=#{order.headTechCheck} and headtech_isaccept=1
+			</if>
+		</if>
+		<!-- 研发 -->
+		<if test="order.decelopId != null">
+			and develop_id=#{order.decelopId}
+			<if test="order.status != null">
+				and `status`=#{order.status}
+			</if>
+			<if test="order.developCheck == 1">
+				and develop_check=#{order.developCheck} and develop_isaccept=1
+			</if>
+		</if>
+	</select>
+	
+	<!-- 待验收 -->
+	<select id="countAccepting" resultType="java.lang.Integer">
+		select count(*) from t_order where isvalid=0
+		<if test="order.status != null">
+				and `status`=#{order.status}
+			</if>
+		<!-- 用户 -->
+		<if test="order.userId != null">
+			and user_id=#{order.userId}
+		</if>
+		<!-- 客服 -->
+		<if test="order.serviceId != null">
+			and service_id=#{order.serviceId}
+		</if>
+		<!-- TSC -->
+		<if test="order.tscId != null">
+			and tech_id=#{order.tscId}
+		</if>
+		<!-- 总部技术 -->
+		<if test="order.headTechId != null">
+			and head_tech_id=#{order.headTechId}
+		</if>
+		<!-- 研发 -->
+		<if test="order.decelopId != null">
+			and develop_id=#{order.decelopId}
+		</if>
+	</select>
+	
+	<!-- 待评价 -->
+	<select id="countEvaluating" resultType="java.lang.Integer">
+		select count(*) from t_order where isvalid=0
+		<!-- 用户 -->
+		<if test="order.userId != null">
+			and user_id=#{order.userId} and `status`=2004
+		</if>
+		<!-- 客服 -->
+		<if test="order.serviceId != null">
+			and service_id=#{order.serviceId} 
+			<if test="order.isServiceComment != null">
+				and service_comment=#{order.isServiceComment}
+			</if> 
+			and (`status`=2004 or `status`=2005)
+		</if>
+		<!-- TSC 分公司技术 -->
+		<if test="order.tscId != null">
+			and tech_id=#{order.tscId}
+			<if test="order.isTSCComment != null">
+				and tsc_comment=#{order.isTSCComment}
+			</if>
+			and (`status`=2004 or `status`=2005)
+		</if>
+		<!-- 总部技术 -->
+		<if test="order.headTechId != null">
+			and head_tech_id=#{order.headTechId}
+			<if test="order.isHeadTechComment != null">
+				and head_teah_comment=#{order.isHeadTechComment}
+			</if>
+			and (`status`=2004 or `status`=2005)
+		</if>
+		<!-- 研发 -->
+		<if test="order.decelopId != null">
+			and develop_id=#{order.decelopId}
+			<if test="order.isHeadDevelopComment != null">
+				and head_develop_comment=#{order.isHeadDevelopComment}
+			</if>
+			and (`status`=2004 or `status`=2005)
+		</if>
+	</select>
+	
+	<select id="queryAdminPageByNumberAndTvId"  resultMap="BaseOrder">
+		SELECT v.stationName AS tvName, o.isvalid as isvalid,o.id,o.order_number,o.`status` ,o.createtime ,u.real_name as userName,c.category_name as caName,s.real_name serviceName,t.real_name tscName,h.real_name headName,d.real_name developName
+		,o.develop_id,o.head_tech_id,o.tech_id,o.tech_starttime,o.tech_endtime,o.head_tech_starttime,o.head_tech_endtime  from t_order o LEFT JOIN t_user u on o.user_id = u.id LEFT JOIN t_order_category c on	o.order_category_id=c.id LEFT JOIN t_group_user s ON o.service_id=s.id LEFT JOIN t_group_user t ON o.tech_id=t.id 
+		 LEFT JOIN t_group_user h ON o.head_tech_id=h.id LEFT JOIN t_group_user d ON o.develop_id=d.id LEFT JOIN t_tv v ON u.tv_id=v.id  WHERE 1=1
+		 <if test="groupUserId != null">
+		 	and o.isvalid=0
+		 	<if test="roleId != null">
+		 		<if test="roleId == 3">
+		 			<!-- 客服 -->
+		 			and o.service_id=#{groupUserId}
+		 		</if>
+		 		<if test="roleId == 10">
+		 			<!-- 分公司技术 -->
+		 			and o.tech_id=#{groupUserId}
+		 		</if>
+		 		<if test="roleId == 11">
+		 			<!-- 总公司技术 -->
+		 			and o.head_tech_id=#{groupUserId}
+		 		</if>
+		 		<if test="roleId == 8">
+		 			<!-- 研发 -->
+		 			and o.develop_id=#{groupUserId}
+		 		</if>
+		 		<if test="roleId != 8 and roleId != 11 and roleId != 10 and roleId != 3">
+		 			and o.id in	(SELECT order_id from t_cc_groupuser where groupuser_id=#{groupUserId})
+		 		</if>
+		 	</if>
+		 </if>
+		 <if test="number != null">
+		 	AND o.order_number=#{number}
+		 </if>
+		 <if test="tvId != null">
+		 	AND u.id IN (SELECT id from t_user where tv_id=#{tvId})
+		 </if>
+		  ORDER BY o.createtime DESC
+		  <if test="limit != null">
+		  	limit #{limit},#{limitSize}
+		  </if>
+	</select>
+	
+	<select id="countAdminPageByNumberAndTvId" resultType="java.lang.Integer">
+		select count(*) from t_order where isvalid=0
+		<if test="number != null">
+		 	AND order_number=#{number}
+		 </if>
+		 <if test="groupUserId != null">
+		 	<if test="roleId != null">
+		 		<if test="roleId == 3">
+		 			<!-- 客服 -->
+		 			and service_id=#{groupUserId}
+		 		</if>
+		 		<if test="roleId == 10">
+		 			<!-- 分公司技术 -->
+		 			and tech_id=#{groupUserId}
+		 		</if>
+		 		<if test="roleId == 11">
+		 			<!-- 总公司技术 -->
+		 			and head_tech_id=#{groupUserId}
+		 		</if>
+		 		<if test="roleId == 8">
+		 			<!-- 研发 -->
+		 			and develop_id=#{groupUserId}
+		 		</if>
+		 		<if test="roleId != 8 and roleId != 11 and roleId != 10 and roleId != 3">
+		 			and id in	(SELECT order_id from t_cc_groupuser where groupuser_id=#{groupUserId})
+		 		</if>
+		 	</if>
+		 	</if>
+		 <if test="tvId != null">
+		 	AND user_id IN (SELECT id from t_user where tv_id=#{tvId})
+		 </if>
+	</select>
+	
+	<select id="countOrdersByItem" resultType="java.lang.Integer">
+		
+		select count(*) from t_order where isvalid=0
+		<if test="order.status == 0">
+			and (`status`=2004 or `status`=2005)
+		</if>
+		<if test="order.status==1">
+			and (`status`=2001 or `status`=2002 or `status`=2003)
+		</if>
+		<if test="order.orderCategory != null">
+			and order_category_id=#{order.orderCategory}
+		</if>
+		<if test="startDate != null and endDate != null">
+			and createtime BETWEEN #{startDate} AND #{endDate}
+		</if>
+		<if test="order.serviceId != null">
+			and service_id=#{order.serviceId}
+		</if>
+		<if test="order.tscId != null">
+			and tech_id=#{order.tscId}
+		</if>
+		<if test="order.headTechId != null">
+			and head_tech_id=#{order.headTechId}
+		</if>
+		<if test="order.decelopId != null">
+			and develop_id=#{order.decelopId}
+		</if>
+	</select>
+	
+	<update id="updateOrder">
+		update t_order
+		<set>
+			<if test="order.status != null">
+				`status`=#{order.status}
+			</if>
+			
+		</set>
+		where id=#{order.id}
+	</update>
+ 
+ 	<update id="updateAutoOrderStatus">
+ 		update  t_order set `status`=2004 
+ 		<![CDATA[
+ 			where createtime < #{preDate}
+ 		  ]]>
+ 		 
+ 	</update>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

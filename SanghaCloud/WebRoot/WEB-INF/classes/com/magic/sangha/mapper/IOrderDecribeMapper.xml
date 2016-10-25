@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.magic.sangha.mapper.IOrderDecribeMapper">
+
+	<resultMap type="OrderDecribeBean" id="BaseOrderDecribe">
+	
+		<result column="id" property="id" javaType="java.lang.Integer"/>
+		<result column="content" property="content" javaType="java.lang.String"/>
+		<result column="videos" property="videos" javaType="java.lang.String"/>
+		<result column="images" property="images" javaType="java.lang.String"/>
+		<result column="voices" property="voices" javaType="java.lang.String"/>
+		<result column="createtime" property="createTime" javaType="java.util.Date"/>
+		<result column="user_id" property="userId" javaType="java.lang.Integer"/>
+		<result column="tsc_id" property="TSCId" javaType="java.lang.Integer"/>
+		<result column="order_id" property="orderId" javaType="java.lang.Integer"/>
+		
+	</resultMap>
+	
+	
+	<insert id="addOrderDecribe">
+		insert into t_order_describe (id,content,videos,images,voices,createtime,user_id,tsc_id,order_id) values(#{decribe.id},#{decribe.content},#{decribe.videos},#{decribe.images},#{decribe.voices},
+		#{decribe.createTime},#{decribe.userId},#{decribe.TSCId},#{decribe.orderId})
+	</insert>
+	
+	<select id="findByOrderId" resultMap="BaseOrderDecribe">
+		select * from t_order_describe where order_id=#{orderId} ORDER BY createtime
+	</select>
+	
+	<select id="queryByOrderIdAndTSC" parameterType="java.util.Map" resultMap="BaseOrderDecribe">
+	
+		select id,createtime,tsc_id,order_id from t_order_describe where order_id=#{orderId} and tsc_id=#{tscId} ORDER BY createtime desc limit 0,1
+	
+	</select>
+	
+
+</mapper>
